@@ -1,0 +1,83 @@
+.ListofCustomer-container {
+    padding: 20px;
+    font-family: Brokman;
+  }
+  
+  .customer-details {
+    display: grid;
+    /* grid-template-columns:50px repeat(5, 140px); */
+    grid-template-columns:50px 120px 140px 100px 120px 100px ;
+    gap: 0px;
+    width: 100%;
+    color: black;
+    border: 1px solid #ddd;
+    width: max-content;
+  }
+  
+  .grid-header, .grid-row {
+    display: contents;
+  }
+  
+  .grid-header span {
+    text-transform:uppercase;
+    /* font-weight: bold; */
+    font-weight: bolder;
+    background-color: #ffffff;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-left: none;
+    /* border-right: none; */
+    border-right: 1px solid #ddd;
+    color: #292929;
+    font-size: 15px;
+  }
+  
+  .grid-row span {
+    /* padding: 10px; */
+    padding: 3px 10px;
+    border: 1px solid #ddd;
+    border-left: none;
+    /* border-right: none; */
+    border-right: 1px solid #ddd;
+  }
+
+  .grid-row {
+    /* color: #544e4e;
+    font-size: 14px; */
+    color: #575757;
+    font-size: 14px;
+  }
+
+  .customer_name {
+    color: rgb(69, 180, 224);
+  }
+
+
+  .active {
+    color: green;
+    font-weight: bold;
+  }
+  
+  .inactive {
+    color: red;
+    font-weight: bold;
+  }
+  
+
+  
+  /* ✅ Highlight selected row */
+  .selected-row span {
+    background-color: rgb(226, 230, 173) !important;
+  }
+  
+  /* Styling for active and inactive statuses */
+  .active {
+    color: green;
+    font-weight: bold;
+  }
+  
+  .inactive {
+    color: red;
+    font-weight: bold;
+  }
+  

@@ -1,0 +1,51 @@
+/* Remove Bootstrap's default focus outline */
+.form-control:focus, 
+.btn:focus, 
+input:focus, 
+select:focus {
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* .modal-content {
+    background-color: #222241;
+    color: #ffffff;
+} */
+
+.modal-title {
+    text-align: center;
+    width: 100%;
+   
+}
+
+.modal-header h5 {
+    margin-left: 0;
+}
+
+.modal-header button {
+    color: #ffffff;
+    background-color: #ffffff;
+}
+
+.modal-header button:hover {
+    color: red;
+}
+
+#workassignsubmit_btn {
+    background-color: #f3eeee;
+    color: black;
+    margin-bottom: 5px;
+    margin-top: 10px;
+    margin-left: 150px;
+    padding: 5px 20px;
+    border: none;
+    border-radius: 6px;
+    box-shadow: 0px 0px 2px black;
+    transition: all 0.8s ease-in;
+  
+  }
+  
+  #workassignsubmit_btn:hover {
+    background-color: #222241;
+    color: #ffffff;
+  }

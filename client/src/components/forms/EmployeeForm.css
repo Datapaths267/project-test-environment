@@ -1,0 +1,41 @@
+.modal-content {
+    width: 500px;
+}
+
+.modal-header {
+    align-content: center;
+}
+
+.modal-header h5 {
+    margin-left: 130px;
+    font-weight: 600;
+}
+
+.emp_form label {
+    font-size: 18px;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.Toastify__toast-container {
+    z-index: 99999 !important; /* Ensure it's above the modal */
+  }
+  
+  #employeeformsubit_btn {
+    background-color: #f3eeee;
+    color: black;
+    margin-bottom: 0px;
+    margin-top: 10px;
+    margin-left: 180px;
+    padding: 5px 20px;
+    border: none;
+    border-radius: 6px;
+    box-shadow: 0px 0px 2px black;
+    transition: all 0.8s ease-in;
+  
+  }
+  
+  #employeeformsubit_btn:hover {
+    background-color: #222241;
+    color: #ffffff;
+  }

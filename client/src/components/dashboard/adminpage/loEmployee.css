@@ -1,0 +1,100 @@
+/* .navbar-container .ListofEmployee-container {
+  width: 50%;
+} */
+
+.ListofEmployee-container {
+    padding: 20px;
+    font-family: Brokman;
+    margin: 0;
+    
+  }
+  
+  .employee-details {
+    display: grid;
+    /* grid-template-columns: 40px repeat(13, 1fr); */
+    grid-template-columns: 50px 110px 90px 120px 140px  150px 100px 90px 140px 150px 120px 120px 210px 180px ;
+    gap: 0px;
+    width: 100%;
+    color: black;
+    border: 1px solid #ddd;
+    width: max-content;
+    overflow-x: hidden;
+  }
+  
+
+/* 
+  .employee-grid-header {
+    gap: 50px;
+  } */
+  
+  .employee-grid-header, .employee-grid-row {
+    display: contents;
+    
+  }
+  
+  .employee-grid-header span {
+    text-transform:uppercase;
+    font-weight: 600;
+    background-color: #ffffff;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-left: none;
+    /* border-right: none; */
+    border-right: 1px solid #ddd;
+    color: #292929;
+    font-size: 15px;
+  }
+  
+  .employee-grid-row span {
+    /* padding: 10px; */
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-left: none;
+    /* border-right: none; */
+    border-right: 1px solid #ddd;
+    transition: background-color 0.3s ease; /* Smooth effect */
+  }
+
+  .employee-grid-row {
+    /* color: #544e4e;
+    font-size: 15px; */
+    color: #575757;
+    font-size: 14px;
+
+  }
+
+  .employee-grid-row span:hover {
+    background-color: #e7e7e7;
+  }
+  
+.emp_name, .emp_email {
+  color: rgb(24, 172, 231);
+}
+
+  .active {
+    color: green;
+    font-weight: bold;
+  }
+
+  .inactive {
+    color: red;
+    font-weight: bold;
+  }
+  
+  .employee-grid-row {
+    display: contents; /* Keep the grid structure intact */
+  }
+  
+  /* .employee-grid-row span {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-left: none;
+    border-right: none;
+    
+  } */
+  
+  /* ✅ Apply background color to entire row when checkbox is checked */
+  .employee-grid-row:has(input[type="checkbox"]:checked) span {
+    background-color: lightblue;
+  }
+  
