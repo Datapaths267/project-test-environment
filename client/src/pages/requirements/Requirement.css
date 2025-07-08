@@ -1,0 +1,99 @@
+.Requirement-container {
+    padding: 20px;
+    font-family: Brokman;
+}
+
+.add-requirement-btn {
+    margin-bottom: 20px;
+}
+
+.clear-btn {
+    padding: 5px;
+    height: 40px;
+}
+
+.filters {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.filters input[type="date"],
+.filters input[type="text"],
+.filter-status,
+.filter-input {
+    margin-right: 10px;
+}
+
+.filter-input {
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.requirement-table-structure {
+    display: grid;
+    grid-template-columns: repeat(22, minmax(100px, auto));
+    gap: 0px;
+    width: 100%;
+    border: 1px solid #ddd;
+    width: max-content;
+}
+
+.requirement-table-header,
+.requirement-table-row {
+    display: contents;
+}
+
+.requirement-table-header span,
+.requirement-table-row span {
+    border: 1px solid #ddd;
+    border-left: none;
+    border-right: 1px solid #ddd;
+}
+
+.requirement-table-row span input {
+    border: none;
+    background-color: transparent;
+    color: #575757;
+}
+
+.contact-filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.filter-input,
+.filter-select {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.requirement-table-header span {
+    text-transform: uppercase;
+    background-color: #ffffff;
+    padding: 8px;
+    color: #292929;
+    font-size: 15px;
+    font-weight: bolder;
+}
+
+.requirement-table-row span {
+    padding: 5px 10px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    overflow-x: hidden;
+    color: #575757;
+}
+
+.requirement-table-row input[type="checkbox"] {
+    align-items: center;
+    justify-content: center;
+    margin: 2px 16px;
+}
+
+.requirement-name {
+    color: rgb(24, 172, 231) !important;
+}

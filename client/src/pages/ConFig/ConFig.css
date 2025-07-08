@@ -1,0 +1,61 @@
+.config-container {
+  padding: 20px;
+  font-family: Brokman;
+}
+
+.config-title {
+  margin-bottom: 20px;
+}
+
+.config-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.config-row {
+  vertical-align: top;
+  border-bottom: 1px solid #ccc;
+}
+
+.config-type-cell {
+  font-weight: bold;
+  padding: 10px;
+  width: 200px;
+  text-transform: capitalize;
+}
+
+.config-values-cell {
+  padding: 10px;
+  width: 100%;
+}
+
+.config-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.config-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+}
+
+.config-delete-btn {
+  background: transparent;
+  border: none;
+  color: red;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.config-input {
+  padding: 5px;
+  width: 60%;
+  margin-right: 10px;
+}
+
+.config-add-btn {
+  padding: 5px 10px;
+  cursor: pointer;
+}

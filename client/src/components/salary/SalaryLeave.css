@@ -1,0 +1,314 @@
+/* #salary-leave-container {
+  padding: 20px;
+  font-family: Brokman;
+  width: 100%;
+  overflow-x: auto;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.salary-leave-filters {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.filter-group span {
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.salary-leave-search {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  width: 250px;
+  border-radius: 4px;
+}
+
+.salary-leave-filter {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-width: 120px;
+  font-size: 14px;
+}
+
+.salary-leave-scroll-wrapper {
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 100%;
+  scrollbar-width: auto;
+  scrollbar-color: #ccc #f1f1f1;
+  padding-bottom: 10px;
+}
+
+.salary-leave-scroll-wrapper::-webkit-scrollbar {
+  height: 10px;
+}
+
+.salary-leave-scroll-wrapper::-webkit-scrollbar-thumb {
+  background-color: #aaa;
+  border-radius: 4px;
+}
+
+.salary-leave-scroll-wrapper::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
+.salary-leave-grid {
+  display: grid;
+  grid-template-columns: repeat(14, minmax(140px, auto));
+  width: max-content;
+  min-width: 100%;
+  border: 1px solid #e0e0e0;
+  font-size: 14px;
+}
+
+.salary-leave-grid-header,
+.salary-leave-grid-row {
+  display: contents;
+}
+
+.salary-leave-grid-header span {
+  position: sticky;
+  top: 0;
+  font-size: 14px;
+  font-weight: 700;
+  background-color: #f9f9f9;
+  color: #292929;
+  padding: 12px 10px;
+  border: 1px solid #ddd;
+  border-left: none;
+  border-top: none;
+  text-align: center;
+  z-index: 2;
+}
+
+.salary-leave-grid-row>span,
+.salary-leave-grid-row>input,
+.salary-leave-grid-row>select {
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #e0e0e0;
+  border-left: none;
+  border-top: none;
+  background-color: white;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.salary-leave-grid-row>input,
+.salary-leave-grid-row>select {
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 0;
+  border: 1px solid #ddd;
+  min-height: 36px;
+}
+
+.salary-leave-grid-row>input:focus,
+.salary-leave-grid-row>select:focus {
+  outline: 2px solid #007bff;
+  z-index: 1;
+}
+
+.salary-leave-grid-row:hover>span,
+.salary-leave-grid-row:hover>input,
+.salary-leave-grid-row:hover>select {
+  background-color: #f0f8ff;
+  transition: background-color 0.3s ease;
+}
+
+.edited-row>input:not(:read-only) {
+  background-color: #fff8dc;
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.pagination-controls button {
+  padding: 5px 15px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pagination-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.salary-leave-save-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #222241;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.salary-leave-save-button:hover {
+  background-color: #007bff;
+}
+
+.salary-leave-save-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.no-data {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.loading-container {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+} */
+
+
+.container {
+  padding: 24px;
+  font-family: Brokman;
+}
+
+.main-heading {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 16px;
+  border: 1px solid #ccc;
+}
+
+.scroll-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.scrollbar-top {
+  overflow-x: auto;
+  margin-bottom: 8px;
+  height: 15px;
+}
+
+.scrollbar-width {
+  width: 1700px;
+  height: 1px;
+}
+
+.scrollbar-bottom {
+  overflow-x: auto;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.data-table {
+  min-width: 1700px;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.data-table th,
+.data-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+.data-table thead {
+  background-color: #f5f5f5;
+}
+
+.input-field {
+  width: 100%;
+  padding: 4px;
+  border: 1px solid #ccc;
+}
+
+.leave-date-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.btn {
+  padding: 4px 12px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+}
+
+.edit-btn {
+  background-color: #007bff;
+}
+
+.save-btn {
+  background-color: #28a745;
+}
+
+.no-data-text {
+  text-align: center;
+  padding: 16px;
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+  align-items: center;
+}
+
+.pagination-btn {
+  background-color: #e0e0e0;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.leave-details-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.leave-day-detail {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

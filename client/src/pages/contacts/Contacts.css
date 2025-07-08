@@ -1,0 +1,118 @@
+.contact-container {
+    padding: 20px;
+    font-family: Brokman;
+}
+
+.add-contact-btn {
+    margin-bottom: 20px;
+}
+
+.contact-row span input {
+    border: none;
+    background-color: transparent;
+    color: #575757;
+}
+
+
+.contact-filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.filter-input,
+.filter-select {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+
+.contact-table-structure {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(100px, auto));
+    gap: 0px;
+    width: 100%;
+    border: 1px solid #ddd;
+    width: max-content;
+}
+
+.Contact-table-headers,
+.contact-row {
+    display: contents;
+}
+
+.Contact-table-headers span,
+.contact-row span {
+    border: 1px solid #ddd;
+    border-left: none;
+    border-right: 1px solid #ddd;
+}
+
+.Contact-table-headers span {
+    text-transform: uppercase;
+    background-color: #ffffff;
+    padding: 8px;
+    color: #292929;
+    font-size: 15px;
+    font-weight: bolder;
+}
+
+.contact-row span {
+    padding: 5px 10px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    overflow-x: hidden;
+    color: #575757;
+}
+
+.contact-row input[type="checkbox"] {
+    align-items: center;
+    justify-content: center;
+    margin: 2px 16px;
+}
+
+.contact_name {
+    color: rgb(24, 172, 231) !important;
+}
+
+#active {
+    color: green !important;
+    font-weight: bold;
+}
+
+#not_active {
+    color: red !important;
+    font-weight: bold;
+}
+
+
+.selected-row span {
+    background-color: rgb(255, 255, 229) !important;
+}
+
+.modal-content {
+    box-shadow: 0px 0px 3px rgb(65, 64, 64);
+}
+
+.contact-profile-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.viewable-image {
+    width: 100%;
+    max-width: 300px;
+    border-radius: 10px;
+    object-fit: contain;
+}
+
+.image-popup-modal .modal-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

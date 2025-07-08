@@ -1,0 +1,82 @@
+.OnboardedCandidates-container {
+    padding: 20px;
+    font-family: Brokman !important;
+}
+
+.add-OnboardedCandidates-btn {
+    margin-bottom: 20px;
+}
+
+.OnboardedCandidates-filters {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.OnboardedCandidates-filters input,
+.OnboardedCandidates-filters select {
+    margin-right: 20px;
+}
+
+.OnboardedCandidates-table-structure {
+    display: grid;
+    grid-template-columns: repeat(20, minmax(100px, auto));
+    gap: 0px;
+    width: 100%;
+    border: 1px solid #ddd;
+    width: max-content;
+}
+
+.OnboardedCandidates-table-header,
+.OnboardedCandidates-table-row {
+    display: contents;
+}
+
+.OnboardedCandidates-table-row span input {
+    border: none;
+    background-color: transparent;
+    color: #575757;
+    cursor: pointer;
+}
+
+.OnboardedCandidates-table-header span,
+.OnboardedCandidates-table-row span {
+    border: 1px solid #ddd;
+    border-left: none;
+    border-right: 1px solid #ddd;
+}
+
+.OnboardedCandidates-table-header span {
+    text-transform: uppercase;
+    background-color: #ffffff;
+    padding: 8px;
+    color: #292929;
+    font-size: 15px;
+    font-weight: bolder;
+}
+
+.OnboardedCandidates-table-row span {
+    padding: 5px 10px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    overflow-x: hidden;
+    color: #575757;
+}
+
+.OnboardedCandidates-table-row spand {
+    border-right: 2px #292929;
+}
+
+.OnboardedCandidates-table-row input[type="checkbox"] {
+    align-items: center;
+    justify-content: center;
+    margin: 2px 16px;
+}
+
+.selected-row {
+    background-color: #d3f9d8;
+    /* Light green, change as needed */
+}
+
+.OnboardedCandidates-name {
+    color: rgb(24, 172, 231) !important;
+}

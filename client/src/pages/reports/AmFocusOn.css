@@ -1,0 +1,136 @@
+/* .AMFocusOn-container {
+    padding: 20px;
+    font-family: Brokman;
+}
+
+.add-Candidate-btn {
+    margin-bottom: 20px;
+}
+
+.AMFocusOn-table-structure {
+    display: grid;
+    grid-template-columns: repeat(14, minmax(100px, auto));
+    gap: 0px;
+    width: 100%;
+    border: 1px solid #ddd;
+    width: max-content;
+}
+
+.AMFocusOn-table-headers,
+.AMFocusOn-row {
+    display: contents;
+}
+
+.AMFocusOn-table-headers span,
+.AMFocusOn-row span {
+    border: 1px solid #ddd;
+    border-left: none;
+    border-right: 1px solid #ddd;
+}
+
+.AMFocusOn-table-headers span {
+    text-transform: uppercase;
+    background-color: #ffffff;
+    padding: 8px;
+    color: #292929;
+    font-size: 15px;
+    font-weight: bolder;
+}
+
+.AMFocusOn-row span {
+    padding: 5px 10px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    overflow-x: hidden;
+    color: #575757;
+}
+
+.AMFocusOn-row span input {
+    border: none;
+    background-color: transparent;
+    color: #575757;
+}
+
+.AMFocusOn-row input[type="checkbox"] {
+    align-items: center;
+    justify-content: center;
+    margin: 2px 16px;
+}
+
+.AMFocusOn-name {
+    color: rgb(24, 172, 231) !important;
+}
+
+
+#active {
+    color: green;
+    font-weight: bold;
+}
+
+#not_active {
+    color: red;
+    font-weight: bold;
+}
+
+
+
+.selected-row span {
+    background-color: rgb(255, 255, 229) !important;
+}
+
+.modal-content {
+    box-shadow: 0px 0px 3px rgb(65, 64, 64);
+} */
+
+/* .AMFocusOn-container {
+    padding: 20px;
+    width: 100%;
+}
+
+.AMFocusOn-table-container {
+    width: 100%;
+}
+
+.AMFocusOn-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.AMFocusOn-table th,
+.AMFocusOn-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+}
+
+.AMFocusOn-table th {
+    background-color: #eee;
+    font-weight: bold;
+    width: 100px auto;
+} */
+
+.AMFocusOn-container {
+    padding: 20px;
+    font-family: Brokman;
+}
+
+.AMFocusOn-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Brokman;
+    text-align: center;
+}
+
+.AMFocusOn-table th,
+.AMFocusOn-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+}
+
+.AMFocusOn-table thead th {
+    background-color: #e0e0e0;
+}
+
+.AMFocusOn-table th[colspan="4"] {
+    background-color: yellow;
+}

@@ -1,0 +1,175 @@
+.salary-container {
+  padding: 20px 20px 20px 0px;
+  font-family: Brokman;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.salary-filters {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.filter-group span {
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.salary-search {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  width: 250px;
+  border-radius: 4px;
+}
+
+.salary-filter {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-width: 120px;
+  font-size: 14px;
+}
+
+.salary-scroll-wrapper {
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: 100%;
+  scrollbar-width: auto;
+  scrollbar-color: #ccc #f1f1f1;
+  padding-bottom: 10px;
+}
+
+.salary-scroll-wrapper::-webkit-scrollbar {
+  height: 10px;
+}
+
+.salary-scroll-wrapper::-webkit-scrollbar-thumb {
+  background-color: #aaa;
+  border-radius: 4px;
+}
+
+.salary-scroll-wrapper::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
+.salary-grid {
+  display: grid;
+  grid-template-columns:  repeat(20, minmax(100px, auto));
+  width: max-content;
+  min-width: 100%;
+  color: black;
+  border: 1px solid #ddd;
+}
+
+.salary-grid-header,
+.salary-grid-row {
+  display: contents;
+}
+
+.salary-grid-header span {
+  position: sticky;
+  top: 0;
+  text-transform: uppercase;
+  font-weight: 600;
+  background-color: #ffffff;
+  color: #292929;
+  font-size: 15px;
+  z-index: 2;
+  padding: 12px 10px;
+  border: 1px solid #ddd;
+  border-left: none;
+  border-top: none;
+  text-align: center;
+}
+
+.salary-grid-row > span,
+.salary-grid-row > input,
+.salary-grid-row > select {
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-left: none;
+  border-top: none;
+  background-color: white;
+  font-size: 14px;
+  color: #575757;
+  display: flex;
+  align-items: center;
+}
+
+.salary-grid-row > input,
+.salary-grid-row > select {
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 0;
+  border: 1px solid #ddd;
+  min-height: 36px;
+}
+
+.salary-grid-row > input:focus,
+.salary-grid-row > select:focus {
+  outline: 2px solid #007bff;
+  z-index: 1;
+}
+
+.salary-grid-row:hover > span,
+.salary-grid-row:hover > input,
+.salary-grid-row:hover > select {
+  background-color: #e7e7e7;
+  transition: background-color 0.3s ease;
+}
+
+.edited-row > input:not(:read-only) {
+  background-color: #fff8dc;
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.pagination-controls button {
+  padding: 5px 15px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pagination-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.salary-save-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #222241;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.salary-save-button:hover {
+  background-color: #007bff;
+}
+
+.salary-save-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}

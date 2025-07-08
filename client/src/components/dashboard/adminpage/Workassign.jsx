@@ -1,283 +1,301 @@
+// File: Workassign.js
+
 import React, { useState, useEffect } from 'react';
 import './workassign.css';
 import '../../forms/WorkAssignForm.css';
 import axios from 'axios';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import EmployeeForm from '../../forms/EmployeeForm'; // Import the form component
-import { ToastContainer } from 'react-toastify';
-import WorkAssignForm from '../../forms/WorkAssignForm';
-import ChangeWorkAssignForm from '../../forms/ChangeWorkAssignForm';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Workassign() {
-  const [companylist, setCompanyList] = useState([]);
-  const [workassign, setWorkassign] = useState([]);
-  const [workassigncompanies, setWorkassignCompanies] = useState([]);
-  const [worknotassign, setWorknotassign] = useState([]);
+  const [unassignedEmployees, setUnassignedEmployees] = useState([]);
   const [selectedRows, setSelectedRows] = useState(new Set());
-  const [showForm, setShowForm] = useState(false);
-  const [showWorkAssignForm, setShowWorkAssignForm] = useState({status: false, empid: ''});
+  const [editedRows, setEditedRows] = useState(new Set());
+  const [activeAssignRow, setActiveAssignRow] = useState(null);
+  const [reportsToOptions, setReportsToOptions] = useState([]);
+  const [clientAssignments, setClientAssignments] = useState([]);
+  const [clients, setClients] = useState([]);
+  const [recruiters, setRecruiters] = useState([]);
+  const [selectedRecruiter, setSelectedRecruiter] = useState('');
+  const [selectedClient, setSelectedClient] = useState('');
+  const [showAssignForm, setShowAssignForm] = useState(false);
 
-  // useEffect(() => {
-  //   getData_From_Work_Assign();
-  //   getData_From_Work_Not_Assign();
-//   // }, []);
-// <WorkAssignForm />
+  const token = localStorage.getItem('authToken');
+  const companyId = localStorage.getItem('companyId');
+  const country = localStorage.getItem('country');
+
+  const headers = { Authorization: `Bearer ${token}` };
+  const params = { companyId, country };
 
   useEffect(() => {
-  const fetchAllData = async () => {
-    await Promise.all([
-      getData_From_company(),
-      getData_From_Work_Assign(),
-      getData_From_Work_Not_Assign(),
-      getData_From_Work_Assign_company_list() // Fetch company details
-    ]);
+    fetchUnassignedEmployees();
+    fetchClientAssignments();
+    fetchClients();
+    fetchRecruiters();
+  }, []);
+
+  const fetchUnassignedEmployees = async () => {
+    try {
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_API_URL}api/employeeList_With_Work_Not_Assign`,
+        { headers, params }
+      );
+      setUnassignedEmployees(data);
+    } catch (err) {
+      toast.error('Failed to load unassigned employees');
+    }
   };
-  fetchAllData();
-}, []);
 
-const getData_From_company = async () => {
-  console.log("entered into work assign companies......")
+  const fetchClientAssignments = async () => {
     try {
-        const response = await axios.get(process.env.REACT_APP_API_URL + 'companies');
-        console.log("stored companies:", response.data);
-        setCompanyList(response.data);
-    } catch (error) {
-        console.error("Error fetching assigned employees:", error);
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_API_URL}api/assignment/client-assignments`,
+        { headers, params }
+      );
+      setClientAssignments(data);
+    } catch (err) {
+      toast.error('Failed to load client assignments');
     }
-};
+  };
 
-
- const getData_From_Work_Assign = async () => {
-  console.log("entered into work assign table......")
+  const fetchRecruiters = async () => {
     try {
-        const response = await axios.get(process.env.REACT_APP_API_URL + 'employeeList_With_Work_Assign');
-        console.log("Assigned Employees:", response.data);
-        setWorkassign(response.data);
-    } catch (error) {
-        console.error("Error fetching assigned employees:", error);
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_API_URL}api/assignment/recruiters`,
+        { headers, params }
+      );
+      setRecruiters(data);
+    } catch (err) {
+      toast.error('Failed to load recruiters');
     }
-};
+  };
 
-const getData_From_Work_Assign_company_list = async () => {
-  console.log("entered into work assign company......")
+  const fetchClients = async () => {
     try {
-        const response = await axios.get(process.env.REACT_APP_API_URL + 'work_assign_company_list');
-        console.log("Assigned Employees work assign company:", response.data);
-        setWorkassignCompanies(response.data);
-    } catch (error) {
-        console.error("Error fetching assigned employees:", error);
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_API_URL}api/assignment/clients`,
+        { headers, params }
+      );
+      setClients(data);
+    } catch (err) {
+      toast.error('Failed to load clients');
     }
-};
+  };
 
-const getData_From_Work_Not_Assign = async () => {
-  console.log("entered into work assign table......")
-    try {
-        const response = await axios.get(process.env.REACT_APP_API_URL + 'employeeList_With_Work_Not_Assign');
-        console.log("Not Assigned Employees:", response.data);
-        setWorknotassign(response.data);
-    } catch (error) {
-        console.error("Error fetching not assigned employees:", error);
-    }
-};
-
-
-  const handleCheckboxChange = (employeeId) => {
-    setSelectedRows((prevSelected) => {
-      const newSelected = new Set(prevSelected);
-      if (newSelected.has(employeeId)) {
-        newSelected.delete(employeeId);
-      } else {
-        newSelected.add(employeeId);
-      }
-      return newSelected;
+  const toggleRowSelection = (employeeId) => {
+    setSelectedRows((prev) => {
+      const updated = new Set(prev);
+      updated.has(employeeId) ? updated.delete(employeeId) : updated.add(employeeId);
+      return updated;
     });
   };
 
-  const handleAddEmployee_btn = async (newEmployee) => {
-    console.log("entering try11 ..."+ newEmployee);
+  const handleAssignClick = async (employeeId) => {
+    setActiveAssignRow(employeeId);
     try {
-      await axios.post(process.env.REACT_APP_API_URL + 'addEmployee', newEmployee);
-      console.log("entering try ..."+ newEmployee);
-      alert('Employee added successfully!');
-      
-      setShowForm(false);
-     
-    } catch (error) {
-      console.error("Error adding employee:", error);
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_API_URL}api/assignment/reports-to-options`,
+        {
+          headers,
+          params: { employeeId },
+        }
+      );
+      setReportsToOptions(data);
+    } catch (err) {
+      toast.error('Failed to load assignable employees');
+    }
+  };
+
+  const handleEdit = (index, field, value) => {
+    const updated = [...unassignedEmployees];
+    updated[index] = { ...updated[index], [field]: value };
+    setUnassignedEmployees(updated);
+    setEditedRows((prev) => new Set(prev).add(index));
+  };
+
+  const saveEmployeeAssignments = async () => {
+    try {
+      const updatedRows = Array.from(editedRows).map((i) => unassignedEmployees[i]);
+      for (const row of updatedRows) {
+        if (!row.reports_to) continue;
+
+        await axios.put(
+          `${process.env.REACT_APP_API_URL}api/assignment/employees/updateReportsTo`,
+          {
+            employee_id: row.employee_id,
+            reports_to: row.reports_to,
+          },
+          { headers }
+        );
+      }
+      toast.success('Employee assignments updated!');
+      setEditedRows(new Set());
+      setActiveAssignRow(null);
+      fetchUnassignedEmployees();
+    } catch (err) {
+      toast.error('Failed to save assignments');
+    }
+  };
+
+  const saveClientAssignment = async () => {
+    if (!selectedRecruiter || !selectedClient) {
+      return toast.warn('Please select both recruiter and client.');
     }
 
-    getData_From_Work_Assign();
-    getData_From_Work_Not_Assign();
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_API_URL}api/assignment/assign`,
+        {
+          recruiter_id: selectedRecruiter,
+          customer_id: selectedClient,
+          company_id: companyId,
+          country,
+        },
+        { headers }
+      );
+
+      toast.success('Client assigned successfully!');
+      fetchClientAssignments();
+    } catch (err) {
+      toast.error('Client assignment failed.');
+    }
   };
-
-  const handleWorkAssignSubmit_btn = (data) => {
-    console.log("Assigned Data:", data); // You can perform additional actions here
-    // For example: Update the employee's assigned companies list or show a success message
-
-    setShowWorkAssignForm({ status: false, empid: "" }); // Close the form after submission
-    getData_From_Work_Assign();
-    getData_From_Work_Not_Assign();
-  };
-
-  const handleChangeWorkAssignSubmit_btn = (data) => {
-    console.log("Assigned Data:", data); // You can perform additional actions here
-    // For example: Update the employee's assigned companies list or show a success message
-
-    setShowWorkAssignForm({ status: false, empid: "" }); // Close the form after submission
-    getData_From_Work_Assign();
-    getData_From_Work_Not_Assign();
-  };
-
 
   return (
+    <div className="WorkAssign-container">
+      <h2>Work Assigning</h2>
 
-    <div className='WorkAssign-container'>
-     <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} />
-      <button onClick={() => setShowForm(true)} className='add_user_btn' id='new-user-btn'>
-        ➕ Add New User
-      </button>
+      <section>
+        <h4>Unassigned Employees</h4>
+        <button className="btn btn-primary mt-3" onClick={saveEmployeeAssignments}>
+          Save Assignments
+        </button>
 
-      {showForm && <EmployeeForm onClose={() => setShowForm(false)} onSubmit={handleAddEmployee_btn} />}
+        <div className="WorkAssigning-details1">
+          <div className="WorkAssigning-grid-header1">
+            <span></span>
+            <span>Country</span>
+            <span>Company</span>
+            <span>Emp ID</span>
+            <span>Emp Name</span>
+            <span>Designation</span>
+            <span>Status</span>
+            <span>Assign</span>
+          </div>
 
-      <button className='mass_update_btn'>Mass update</button>
-
-      <div className=''>
-      <h4>Unassigned Employees</h4><br />
-      <div className='WorkAssigning-details1'>
-        <div className='WorkAssigning-grid-header1'>
-          <span> </span>
-          <span>Country</span>
-          <span>Company</span>
-          <span>Emp ID</span>
-          <span>Emp Name</span>
-          <span>Designation</span>
-          <span>Status</span>
-          <span>Assign Company</span>
-
-          {/* <span> </span> */}
-        </div>
-        {worknotassign.map((employee) => (
-          <div key={employee.employee_id} className={`WorkAssigning-grid-row1 ${selectedRows.has(employee.employee_id) ? 'selected-row' : ''}`}>
+          {unassignedEmployees.map((emp, index) => (
+            <div
+              key={emp.employee_id}
+              className={`WorkAssigning-grid-row1 ${selectedRows.has(emp.employee_id) ? 'selected-row' : ''}`}
+            >
               <span>
-                <input type="checkbox" onChange={() => handleCheckboxChange(employee.employee_id)} checked={selectedRows.has(employee.employee_id)} />
+                <input
+                  type="checkbox"
+                  onChange={() => toggleRowSelection(emp.employee_id)}
+                  checked={selectedRows.has(emp.employee_id)}
+                />
               </span>
-              <span>{employee.employee_country}</span>
-              <span className='working_comp'>{employee.employee_working_company}</span>
-              <span>{employee.employee_id}</span>
-              <span className='working_emp_name'>{employee.employee_name}</span>
-              <span>{employee.employee_designation}</span>
-              <span className={employee.employee_status === 'Active' ? 'active' : 'inactive'}>
-                {employee.employee_status}
+              <span>{emp.employee_country}</span>
+              <span>{emp.employee_working_company}</span>
+              <span>{emp.employee_id}</span>
+              <span className="working_emp_name">{emp.employee_name}</span>
+              <span>{emp.employee_designation}</span>
+              <span className={emp.employee_status === 'Active' ? 'active' : 'inactive'}>
+                {emp.employee_status}
               </span>
-              <span className='assign-work-span'>
-                <button 
-                  onClick={() => {
-                    // Setting empid to the employee's id when the button is clicked
-                    setShowWorkAssignForm({ status: true, empid: employee.employee_id });
-                    
-                    // Log the employee's ID to console
-                    console.log("Assigning company for employee with ID:", employee.employee_id);
-                  }}
-
-                  className='assignedcompany-btn'
-                >
-                  Assign company
+              <span>
+                <button className="assigncompany-btn" onClick={() => handleAssignClick(emp.employee_id)}>
+                  Assign Employee
                 </button>
+
+                {activeAssignRow === emp.employee_id ? (
+                  <select
+                    className="form-select"
+                    value={emp.reports_to || ''}
+                    onChange={(e) => handleEdit(index, 'reports_to', e.target.value)}
+                  >
+                    <option value="">Select</option>
+                    {reportsToOptions.map((opt) => (
+                      <option key={opt.employee_id} value={opt.employee_id}>
+                        {opt.employee_name} ({opt.employee_designation})
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <span className="reports-to-label">
+                    {
+                      reportsToOptions.find((o) => o.employee_id === emp.reports_to)?.employee_name ||
+                      'Not Assigned'
+                    }
+                  </span>
+                )}
               </span>
             </div>
-
-        ))}
-        {showWorkAssignForm.status && (
-            <WorkAssignForm
-              onClose={() => setShowWorkAssignForm({ status: false, empid: '' })}
-              onSubmit={handleWorkAssignSubmit_btn}
-              addemployeeid={showWorkAssignForm.empid} // Pass empid here
-            />
-          )}
-
-      </div>
-
-      </div>
-      <br />
-
-      <div>
-      <h4>Assigned Employees</h4><br />
-      <div className='WorkAssigned-details'>
-        <div className='WorkAssigned-grid-header'>
-          <span> </span>
-          <span>Country</span>
-          <span>Company</span>
-          <span>Emp ID</span>
-          <span>Emp Name</span>
-          <span>Designation</span>
-          <span>Status</span>
-          {/* <span>Portal Access</span> */}
-          <span>assigned Companies</span>
-          <span> Update Access </span>
+          ))}
         </div>
-        {workassign.map((employee) => (
-          <div key={employee.employee_id} className={`WorkAssigned-grid-row ${selectedRows.has(employee.employee_id) ? 'selected-row' : ''}`}>
-            <span>
-              <input type="checkbox" onChange={() => handleCheckboxChange(employee.employee_id)} checked={selectedRows.has(employee.employee_id)} />
-            </span>
-            <span>{employee.employee_country}</span>
-            <span className='working_comp' >{employee.employee_working_company}</span>
-            <span>{employee.employee_id}</span>
-            <span className='working_emp_name' >{employee.employee_name}</span>
-            <span>{employee.employee_designation}</span>
-            <span className={employee.employee_status === 'Active' ? 'active' : 'inactive'}>
-              {employee.employee_status}
-            </span>
-            {/* <span className='working_portal_access' >{employee.employee_portal_access}</span> */}
-            <span>
-                  {workassigncompanies
-                    .filter(company => company.user_id === employee.employee_id) // Match employee
-                    .map(company => {
-                      console.log("Employee Work Assigned:", company.work_assigned_comapnies);
+      </section>
 
-                      // Ensure work_assigned_comapnies is an array or convert it
-                      const companyCodes = Array.isArray(company.work_assigned_comapnies)
-                        ? company.work_assigned_comapnies
-                        : company.work_assigned_comapnies.replace(/[{}"]/g, "").split(",");
+      <section className="Client-assigning">
+        <h4>Assigned Clients to Recruiters</h4>
+        <p>Here you can view and assign clients to recruiters.</p>
 
-                      console.log("Extracted Company Codes:", companyCodes);
+        <button className="btn btn-primary mt-3" onClick={() => setShowAssignForm(true)}>
+          Assign Client to Recruiter
+        </button>
 
-                      // Map codes to actual company names
-                      const companyNames = companyCodes.map(code => {
-                        const match = companylist.find(c => c.com_id === code.trim());
-                        return match ? match.com_name : "Unknown";
-                      });
+        {showAssignForm && (
+          <div className="WorkAssigning-details1">
+            <label>Select Recruiter:</label>
+            <select
+              className="form-select"
+              value={selectedRecruiter}
+              onChange={(e) => setSelectedRecruiter(e.target.value)}
+            >
+              <option value="">-- Select Recruiter --</option>
+              {recruiters.map((rec) => (
+                <option key={rec.employee_id} value={rec.employee_id}>
+                  {rec.employee_name} (ID: {rec.employee_id})
+                </option>
+              ))}
+            </select>
 
-                      return companyNames.join(", ");
-                    })}
-                </span>
-            <span>
-            <button 
-                  onClick={() => {
-                    // Setting empid to the employee's id when the button is clicked
-                    setShowWorkAssignForm({ status: true, empid: employee.employee_id });
-                    
-                    // Log the employee's ID to console
-                    console.log("Assigning company for employee with ID:", employee.employee_id);
-                  }}
+            <label>Select Client:</label>
+            <select
+              className="form-select"
+              value={selectedClient}
+              onChange={(e) => setSelectedClient(e.target.value)}
+            >
+              <option value="">-- Select Client --</option>
+              {clients.map((cli) => (
+                <option key={cli.customer_id} value={cli.customer_id}>
+                  {cli.customer_name} (ID: {cli.customer_id})
+                </option>
+              ))}
+            </select>
 
-                  className='change_access_btn'
-                >
-                  Change Access
-                </button>
-            </span>
+            <button className="btn btn-primary mt-3" onClick={saveClientAssignment}>
+              Save Assignments
+            </button>
           </div>
-        ))}
-        {showWorkAssignForm.status && (
-            <ChangeWorkAssignForm
-              onClose={() => setShowWorkAssignForm({ status: false, empid: '' })}
-              onSubmit={handleChangeWorkAssignSubmit_btn}
-              addemployeeid={showWorkAssignForm.empid} // Pass empid here
-            />
-          )}
-      </div>
-      </div>
+        )}
+
+        {/* ✅ Correct Table Format */}
+        <div className="WorkAssigning-details2">
+          <div className="WorkAssigning-grid-header2">
+            <span>Client ID</span>
+            <span>Client Name</span>
+            <span>Recruiter Name</span>
+          </div>
+
+          {clientAssignments.map((assign) => (
+            <div key={`${assign.customer_id}-${assign.recruiter_name}`} className="WorkAssigning-grid-row2">
+              <span>{assign.customer_id}</span>
+              <span>{assign.customer_name}</span>
+              <span>{assign.recruiter_name}</span>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

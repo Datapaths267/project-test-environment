@@ -1,0 +1,21 @@
+.am-table-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.am-focus-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.am-focus-table th,
+.am-focus-table td {
+    border: 1px solid #333;
+    padding: 8px 12px;
+}
+
+.am-focus-table th {
+    background-color: yellow;
+    font-weight: bold;
+}

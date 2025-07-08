@@ -1,0 +1,120 @@
+.tracker-table-wrapper {
+    overflow-x: auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    max-width: 100%;
+}
+
+.tracker-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Brokman;
+    font-size: 14px;
+    text-align: center;
+    table-layout: auto;
+}
+
+.tracker-table th,
+.tracker-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    white-space: nowrap;
+}
+
+.section-header {
+    background-color: #282766;
+    font-weight: bold;
+    color: whitesmoke;
+}
+
+.section-candidate {
+    background-color: rgb(63, 65, 93);
+    color: whitesmoke;
+}
+
+.section-interview {
+    background-color: rgb(254, 165, 110);
+    color: whitesmoke;
+}
+
+.tracker-table thead tr:nth-child(2) th {
+    background-color: #e0e0e0;
+    font-weight: bold;
+}
+
+
+
+/* Column widths */
+.col-year {
+    width: 60px;
+}
+
+.col-month {
+    width: 80px;
+}
+
+.col-date-initiated {
+    width: 130px;
+}
+
+.col-account-manager {
+    width: 150px;
+}
+
+.col-recruiter {
+    width: 120px;
+}
+
+.col-customer {
+    width: 120px;
+}
+
+.col-req-id {
+    width: 120px;
+}
+
+.col-date {
+    width: 100px;
+}
+
+.col-total-profiles {
+    width: 160px;
+}
+
+.col-screen-select {
+    width: 130px;
+}
+
+.col-screen-reject {
+    width: 130px;
+}
+
+.col-interview-reject {
+    width: 150px;
+}
+
+.col-interview-select {
+    width: 150px;
+}
+
+.col-shortlisted {
+    width: 120px;
+}
+
+.col-onboard-failure {
+    width: 140px;
+}
+
+.col-onboarded-success {
+    width: 160px;
+}
+
+.col-offer-rolledout {
+    width: 140px;
+}
+
+.col-offer-rolledout-accepted {
+    width: 170px;
+}

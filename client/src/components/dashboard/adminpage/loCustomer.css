@@ -1,83 +1,176 @@
-.ListofCustomer-container {
+.customer-list-container {
     padding: 20px;
     font-family: Brokman;
-  }
-  
-  .customer-details {
-    display: grid;
-    /* grid-template-columns:50px repeat(5, 140px); */
-    grid-template-columns:50px 120px 140px 100px 120px 100px ;
-    gap: 0px;
-    width: 100%;
-    color: black;
-    border: 1px solid #ddd;
-    width: max-content;
-  }
-  
-  .grid-header, .grid-row {
+}
+
+.add-customer-btn,
+.upload-customer-btn,
+.download-customer-btn,
+.delete-customer-btn {
+    margin: 0px 20px 0px 20px;
+}
+
+.delete-company-btn {
+    margin: 20px 20px 0 20px;
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.delete-company-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.grid-header,
+.grid-row {
     display: contents;
-  }
-  
-  .grid-header span {
-    text-transform:uppercase;
-    /* font-weight: bold; */
-    font-weight: bolder;
-    background-color: #ffffff;
-    padding: 8px;
+}
+
+.grid-header span,
+.grid-row span {
     border: 1px solid #ddd;
     border-left: none;
-    /* border-right: none; */
     border-right: 1px solid #ddd;
+    padding: 5px 10px;
+}
+
+.grid-header span {
+    text-transform: uppercase;
+    font-weight: 600;
+    background-color: #ffffff;
     color: #292929;
     font-size: 15px;
-  }
-  
-  .grid-row span {
-    /* padding: 10px; */
-    padding: 3px 10px;
-    border: 1px solid #ddd;
-    border-left: none;
-    /* border-right: none; */
-    border-right: 1px solid #ddd;
-  }
+}
 
-  .grid-row {
-    /* color: #544e4e;
-    font-size: 14px; */
+.grid-row {
     color: #575757;
     font-size: 14px;
-  }
+}
 
-  .customer_name {
-    color: rgb(69, 180, 224);
-  }
+.grid-row span input {
+    border: none;
+    background-color: transparent;
+    color: #575757;
+}
 
+.grid-row input[type="checkbox"] {
+    align-items: center;
+    justify-content: center;
+    margin: 2px 16px;
+}
 
-  .active {
+.customer_name {
+    color: rgb(24, 172, 231);
+}
+
+.active {
     color: green;
     font-weight: bold;
-  }
-  
-  .inactive {
+}
+
+.inactive {
     color: red;
     font-weight: bold;
-  }
-  
+}
 
-  
-  /* ✅ Highlight selected row */
-  .selected-row span {
+.selected-row span {
     background-color: rgb(226, 230, 173) !important;
-  }
-  
-  /* Styling for active and inactive statuses */
-  .active {
-    color: green;
+}
+
+.customer-details-container {
+    width: 100%;
+    margin: 10px 50px 0px 0px;
+}
+
+.customer-details {
+    display: grid;
+    /* grid-template-columns: 80px 130px 160px 150px 130px 190px 230px 60px 60px 100px 180px 130px 220px 100px 170px 180px 110px 120px 120px; */
+    grid-template-columns: repeat(20, minmax(100px, auto));
+    gap: 0px;
+    width: max-content;
+    color: black;
+    border: 1px solid #ddd;
+    margin-right: 100px !important;
+}
+
+.customer-table-container {
+    padding-right: 100px;
+    margin-top: 30px;
+}
+
+.file-icons {
+    display: flex;
+    gap: 10px;
+    justify-content: space-around;
+    align-items: center;
+    border: none !important;
+}
+
+.icon {
+    font-size: 18px;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+    border: none;
+}
+
+.preview-icon {
+    color: #007bff;
+}
+
+.download-icon {
+    color: #28a745;
+}
+
+.icon:hover {
+    transform: scale(1.2);
+}
+
+.modal.show {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-dialog {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    width: 50%;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    color: #292929;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.modal-title {
+    font-size: 18px;
     font-weight: bold;
-  }
-  
-  .inactive {
-    color: red;
-    font-weight: bold;
-  }
-  
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.modal-body {
+    padding: 15px 0;
+}

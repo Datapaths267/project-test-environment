@@ -1,0 +1,147 @@
+/* General Container Styling */
+.adminpage-container,
+.ListofCompany-container,
+.company-registration-container {
+    padding: 20px;
+    font-family: Brokman;
+}
+
+.ListofCompany-container {
+    max-width: 100%;
+    height: 100vh;
+}
+
+/* Button Styling */
+.add-comapny-btn {
+    margin: 20px 0 20px 20px;
+}
+
+/* Grid Styling */
+.grid-header,
+.grid-row {
+    display: contents;
+}
+
+.grid-header span {
+    text-transform: uppercase;
+    font-weight: bolder;
+    background-color: #ffffff;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-left: none;
+    border-right: 1px solid #ddd;
+    color: #292929;
+    font-size: 15px;
+}
+
+.grid-row span {
+    padding: 3px 10px;
+    border: 1px solid #ddd;
+    border-left: none;
+    border-right: 1px solid #ddd;
+}
+
+.grid-row {
+    color: #575757;
+    font-size: 14px;
+}
+
+/* Customer & Company Specific Styling */
+.customer_name,
+.company_name {
+    color: rgb(24, 172, 231);
+}
+
+.active {
+    color: green;
+    font-weight: bold;
+}
+
+.inactive {
+    color: red;
+    font-weight: bold;
+}
+
+.selected-row span {
+    background-color: rgb(226, 230, 173) !important;
+}
+
+/* Company Details Grid */
+.company-details-container {
+    width: 100%;
+    margin: 10px 50px 0 0;
+}
+
+.company-details-rows {
+    display: grid;
+    /* grid-template-columns: 100px repeat(15, 160px); */
+    grid-template-columns: repeat(16, minmax(100px, auto));
+    gap: 0px;
+    width: max-content;
+    color: black;
+    border: 1px solid #ddd;
+    margin-right: 100px !important;
+}
+
+/* Company Table Styling */
+.company-table-container {
+    padding-right: 100px;
+}
+
+.company-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.company-table th,
+.company-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+.company-table th {
+    background-color: #f4f4f4;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.company-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.company-table tr:hover {
+    background-color: #e2e2e2;
+    transition: 0.3s;
+}
+
+/* Icon Styling */
+.file-icons {
+    display: flex;
+    gap: 10px;
+    justify-content: space-around;
+    align-items: center;
+    border: none !important;
+}
+
+.icon {
+    font-size: 18px;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+    border: none;
+}
+
+.preview-icon {
+    color: #007bff;
+    border: none;
+}
+
+.download-icon {
+    color: #28a745;
+    border: none;
+}
+
+.icon:hover {
+    transform: scale(1.2);
+}

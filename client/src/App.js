@@ -1,19 +1,29 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom"; // Remove BrowserRouter here
 
-import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap/dist/css/bootstrap.min.css";
 
 import LoginPage from "./components/auth/LoginPage";
-import Dashboard from "./layouts/contents/Dashboard"; // Dashboard includes Navbar & Pages
+import Dashboard from "./layouts/contents/Dashboard";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 export default function App() {
+  const userRole = localStorage.getItem("userRole");
+
   return (
-    <Router>
-      
-      <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/dashboard/*" element={<Dashboard />} />
-      </Routes>
-    </Router>
+    <Routes>
+      {/* Public Route */}
+      <Route path="/" element={<LoginPage />} />
+
+      {/* Protected Dashboard Route */}
+      <Route
+        path="/dashboard/*"
+        element={
+          <ProtectedRoute allowedRoles={["admin", "user"]}>
+            <Dashboard userRole={userRole} />
+          </ProtectedRoute>
+        }
+      />
+    </Routes>
   );
 }

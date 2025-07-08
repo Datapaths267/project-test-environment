@@ -1,10 +1,26 @@
- /* Main sidebar container */
- .Nav-container {
+/* Main navbar container */
+.Nav-container {
   width: 100%;
+  font-family: Brokman;
+  position: relative;
 }
 
+/* Hamburger menu button */
+.hamburger-button {
+  position: fixed;
+  top: 15px;
+  left: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: white;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+/* Sidebar container (Hidden by default) */
 .containernav {
-  width: 100%;
+  width: 13%;
   height: 100vh;
   background: #1a1a2e;
   color: white;
@@ -12,20 +28,43 @@
   flex-direction: column;
   align-items: center;
   padding-top: 20px;
+  position: fixed;
+  left: -260px;
+  /* Move off-screen */
+  transition: left 0.3s ease-in-out;
+  /* Scrollbar styles */
+  overflow-y: auto;
 }
 
-/* Sidebar container */
-.sidebar {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+/* Custom scrollbar */
+.containernav::-webkit-scrollbar {
+  width: 6px;
+}
+
+.containernav::-webkit-scrollbar-track {
+  background: #1a1a2e;
+}
+
+.containernav::-webkit-scrollbar-thumb {
+  background: #4a4a4a;
+  border-radius: 3px;
+}
+
+.containernav::-webkit-scrollbar-thumb:hover {
+  background: #5a5a5a;
+}
+
+/* Show sidebar when menu is open */
+.Nav-container.menu-open .containernav {
+  left: 0;
+  top: 0;
 }
 
 /* User logo styling */
 .userlogo {
   font-size: 40px;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
+  margin-top: 20px;
 }
 
 /* Search bar container */
@@ -84,7 +123,6 @@
   display: flex;
   flex-direction: column;
   margin: 0;
-
   font-size: 14px;
 }
 
@@ -97,4 +135,11 @@
 
 .submenu div:hover {
   background: #3a3b3c;
+}
+
+/* Responsive behavior */
+@media (max-width: 768px) {
+  .containernav {
+    width: 200px;
+  }
 }

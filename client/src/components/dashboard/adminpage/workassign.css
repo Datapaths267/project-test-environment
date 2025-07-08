@@ -1,228 +1,69 @@
-.WorkAssign-container {
-  font-family: Brokman;
-}
-
+/* ========== Base Container ========== */
+.WorkAssign-container,
 .ListofCustomer-container {
-    padding: 20px;
-    font-family: Brokman;
-  }
-  
-  .WorkAssigned-details {
-    display: grid;
-     grid-template-columns:  50px 110px 110px 100px 120px 140px  100px  210px 180px;
-    /* grid-template-columns:  50px 110px 110px 100px 120px 140px  100px  160px 220px; */
-    /* grid-template-columns: 40px repeat(5 , .9fr) 160px 100px 200px; */
-    gap: 0px;
-    width: 100%;
-    color: black;
-    border: 1px solid #ddd;
-    width: max-content;
-  }
-
-  .WorkAssigned-grid-header, .WorkAssigned-grid-row {
-    display: contents;
-  }
-  
-  .WorkAssigned-grid-header span {
-    text-transform: uppercase;
-    background-color: #ffffff;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-left: none;
-    border-right: 1px solid #ddd;
-    /* border-right: none; */
-    color: #292929;
-    font-weight: bolder;
-  }
-  
-  .WorkAssigned-grid-row span {
-    padding: 3px 10px;
-    border: 1px solid #ddd;
-    border-left: none;
-    border-right: 1px solid #ddd;
-  }
-
-  .WorkAssigned-grid-row {
-    color: #575757;
-    font-size: 14px;
-  }
-
-  .WorkAssigning-details1 {
-    display: grid;
-    grid-template-columns: 50px 110px 110px 100px 120px 140px 100px 180px;
-    /* grid-template-columns: 40px repeat(5 , 1fr) 100px 180px; */
-    gap: 0px;
-    width: 100%;
-    color: black;
-    border: 1px solid #ddd;
-    width: max-content;
-  }
-  .WorkAssigning-grid-header1, .WorkAssigning-grid-row1 {
-    display: contents;
-  }
-  
-  .WorkAssigning-grid-header1 span {
-    text-transform: uppercase;
-    background-color: #ffffff;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-left: none;
-    border-right: 1px solid #ddd;
-    /* border-right: none; */
-    color: #292929;
-    font-weight: bolder;
-  }
-  
-  .WorkAssigning-grid-row1 span {
-    padding: 3px 10px;
-    border: 1px solid #ddd;
-    border-left: none;
-    border-right: 1px solid #ddd;
-  }
-
-  .WorkAssigning-grid-row1 {
-    color: #575757;
-    font-size: 14px;
-  }
-
-  .working_emp_name {
-    color: rgb(24, 172, 231);
-  }
-
-
-  .active {
-    color: green;
-    font-weight: bold;
-  }
-  
-  .inactive {
-    color: red;
-    font-weight: bold;
-  }
-
-
-/* 
-  .user-add-btn {
-    margin-bottom: 20px;
-  }
-
-.new-user-form {
-    width: 600px;
-    margin: 20px 0;
-    margin-left: 350px;
-    padding: 30px;
-    font-size: 16px;
-    background: #ddeaf7;
-    border-radius: 10px;
-    font-family: Brokman;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: Brokman;
+  padding: 20px;
+  color: #292929;
 }
 
-.new-user-form h3 {
-    text-align: center;
-    font-size: 22px;
-    color: #444;
-    margin-bottom: 20px;
+/* ========== Grid Layouts ========== */
+.WorkAssigning-details1,
+.WorkAssigning-details2 {
+  display: grid;
+  width: 100%;
+  border: 1px solid #ddd;
+  width: max-content;
+  margin-top: 10px;
 }
 
-.new-user-form form div {
-    margin-bottom: 15px;
+/* Grid columns */
+.WorkAssigning-details1 {
+  grid-template-columns: repeat(8, minmax(100px, auto));
 }
 
-.new-user-form label {
-    display: block;
-    font-size: 16px;
-    color: #555;
-    margin-bottom: 5px;
+.WorkAssigning-details2 {
+  grid-template-columns: repeat(3, minmax(120px, auto));
 }
 
-.new-user-form input,
-.new-user-form select {
-    width: 95%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-}
-
-.new-user-form button {
-    width: 80%;
-    padding: 12px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 18px;
-    cursor: pointer;
-    margin-top: 10px;
-    margin-left: 60px;
-}
-
-.new-user-form button:hover {
-    background-color: #0056b3;
-} */
-
-#new-user-btn {
-  margin-bottom: 20px;
-  margin-top: 20px;
-  padding: 5px 9px;
-  border: none;
-  border-radius: 5px;
-  box-shadow: 0px 0px 2px black;
-  transition: all 0.8s ease-in;
-
-}
-
-#new-user-btn:hover {
-  background-color: #222241;
-  color: #ffffff;
-}
-
-.modal-content {
-  box-shadow: 0px 0px 3px rgb(65, 64, 64);
-}
-
-.WorkAssigned-grid-row {
+/* ========== Headers ========== */
+.WorkAssigned-grid-header,
+.WorkAssigning-grid-header1,
+.WorkAssigning-grid-header2 {
   display: contents;
 }
 
-
-.mass_update_btn {
-  margin-left: 50px;
-  padding: 5px 9px;
-  border: none;
-  border-radius: 5px;
-  box-shadow: 0px 0px 2px black;
-  transition: all 0.8s ease-in;
+.WorkAssigning-grid-header1 span,
+.WorkAssigning-grid-header2 span {
+  background-color: #fff;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-left: none;
+  text-transform: uppercase;
+  font-weight: bold;
 }
 
-.mass_update_btn:hover {
-  background-color: #222241;
-  color: #ffffff;
+/* ========== Rows ========== */
+.WorkAssigned-grid-row,
+.WorkAssigning-grid-row1,
+.WorkAssigning-grid-row2 {
+  display: contents;
+  font-size: 14px;
+  color: #575757;
 }
 
-.change_access_btn {
-  padding: 2px 9px;
-  margin: 5px 20px;
-  /* padding: 0;
-  margin: 0; */
-  border: none;
-  border-radius: 5px;
-  box-shadow: 0px 0px 2px black;
-  transition: all 0.8s ease-in;
+.WorkAssigning-grid-row1 span,
+.WorkAssigning-grid-row2 span {
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-left: none;
 }
 
-.change_access_btn:hover {
-  background-color: #222241;
-  color: #ffffff; 
-}
-
-/* ✅ Highlight selected row */
+/* Highlight selected row */
 .selected-row span {
-  background-color: rgb(255, 255, 229) !important;
+  background-color: #ffffe5 !important;
 }
 
-/* Styling for active and inactive statuses */
+/* ========== Employee Status ========== */
 .active {
   color: green;
   font-weight: bold;
@@ -233,19 +74,100 @@
   font-weight: bold;
 }
 
-/* .assign-work-span {
+/* ========== Highlighted Texts ========== */
+.working_emp_name {
+  color: rgb(24, 172, 231);
+}
 
-} */
-.assignedcompany-btn {
-  padding: 2px 9px;
-  margin: 5px 20px;
+.working_comp {
+  font-style: italic;
+}
+
+/* ========== Buttons ========== */
+button,
+.assigncompany-btn,
+#new-user-btn,
+.mass_update_btn,
+.change_access_btn,
+.updateassignedcompany-btn {
+  padding: 5px 10px;
   border: none;
   border-radius: 5px;
   box-shadow: 0px 0px 2px black;
-  transition: all 0.8s ease-in;
+  background-color: #f8f9fa;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
 }
 
-.assignedcompany-btn:hover {
+button:hover,
+.assigncompany-btn:hover,
+#new-user-btn:hover,
+.mass_update_btn:hover,
+.change_access_btn:hover,
+.updateassignedcompany-btn:hover {
   background-color: #222241;
-  color: #ffffff; 
+  color: white;
+}
+
+/* ========== Modal and Utility ========== */
+.modal-content {
+  box-shadow: 0px 0px 3px rgba(65, 64, 64, 0.3);
+}
+
+.assignment-table,
+.table-wrapper {
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* ========== Table Styling (if used in fallback) ========== */
+.hierarchy-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.hierarchy-table th,
+.hierarchy-table td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+}
+
+/* ========== Flex Assign Section ========== */
+.assign-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.assign-section select,
+.assign-section button {
+  padding: 8px;
+}
+
+/* ========== Form Select Styling ========== */
+.form-select {
+  padding: 6px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  margin: 5px 0;
+  width: 100%;
+  min-width: 200px;
+}
+
+/* ========== Responsive (optional tweak) ========== */
+@media screen and (max-width: 768px) {
+
+  .WorkAssigning-details1,
+  .WorkAssigning-details2 {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+
+  .form-select {
+    min-width: 100%;
+  }
 }
