@@ -32,7 +32,9 @@ if (!fs.existsSync(uploadDir)) {
 }
 
 // Middleware
-app.use(cors());
+// app.use(cors());
+app.use(cors({ origin: "*", credentials: true }));
+
 app.use(express.json());
 app.use(bp.urlencoded({ extended: true }));
 app.use('/uploads', express.static(uploadDir)); // Serve static files
