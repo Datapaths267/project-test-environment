@@ -92,7 +92,7 @@ const EmployeeSalary = () => {
     const fetchSalaryData = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get('http://13.51.149.114:8000/api/employee-salary-details');
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}api/employee-salary-details`);
         setSalaryData(response.data);
         setFilteredData(response.data);
         console.log('Fetched salary data:', response.data);
@@ -155,7 +155,7 @@ const EmployeeSalary = () => {
       setIsSaving(true);
       console.log('Saving edited rows:', Array.from(editedRows));
       console.log('Filtered data:', filteredData);
-      await axios.put('http://13.51.149.114:8000/api/update-employee-salary-details', filteredData);
+      await axios.put(`${process.env.REACT_APP_API_URL}api/update-employee-salary-details`, filteredData);
 
       toast.success('Salary details updated successfully!');
       setEditedRows(new Set());

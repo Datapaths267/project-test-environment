@@ -41,7 +41,7 @@ const SalaryHistory = () => {
         setError(null);
 
         console.log('Fetching salary history data...');
-        const response = await axios.get('http://13.51.149.114:8000/api/employee-salary-history-details');
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}api/employee-salary-history-details`);
 
         console.log('API Response:', response.data);
 
@@ -89,7 +89,7 @@ const SalaryHistory = () => {
           const currentMonth = today.toLocaleString('default', { month: 'long' });
           const currentYear = today.getFullYear();
 
-          const res = await axios.get(`http://13.51.149.114:8000/api/salary-exists?month=${currentMonth}&year=${currentYear}`);
+          const res = await axios.get(`${process.env.REACT_APP_API_URL}api/salary-exists?month=${currentMonth}&year=${currentYear}`);
           if (res.data && res.data.exists) {
             setSalaryAlreadyPushed(true);
             console.warn('⚠️ Salary has already been pushed for this month.');
@@ -207,7 +207,7 @@ const SalaryHistory = () => {
       const checkMonth = filteredData[0].month;
       const checkYear = filteredData[0].year;
 
-      const checkResponse = await axios.get(`http://13.51.149.114:8000/api/salary-exists`, {
+      const checkResponse = await axios.get(`${process.env.REACT_APP_API_URL}api/salary-exists`, {
         params: { month: checkMonth, year: checkYear }
       });
 
@@ -218,7 +218,7 @@ const SalaryHistory = () => {
       }
 
       // ✅ Proceed if salary is not already generated
-      await axios.put('http://13.51.149.114:8000/api/push-employee-salary-details', filteredData);
+      await axios.put(`${process.env.REACT_APP_API_URL}api/push-employee-salary-details`, filteredData);
       toast.success('Salary history updated successfully!');
       setEditedRows(new Set());
 

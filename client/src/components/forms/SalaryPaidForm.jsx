@@ -111,7 +111,7 @@ const SalaryPaidForm = () => {
     const fetchSalaryData = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get('http://13.51.149.114:8000/api/employee-salary-details');
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}api/employee-salary-details`);
         setSalaryData(response.data);
         setFilteredData(response.data);
       } catch (error) {
@@ -177,7 +177,7 @@ const SalaryPaidForm = () => {
       }));
 
       const response = await axios.put(
-        'http://13.51.149.114:8000/api/push-to-salary-history',
+        `${process.env.REACT_APP_API_URL}api/push-to-salary-history`,
         updatedData
       );
 
@@ -236,7 +236,7 @@ const SalaryPaidForm = () => {
         month: selectedMonth,
         year: selectedYear
       }));
-      await axios.put('http://13.51.149.114:8000/api/update-employee-salary-details', updatedData);
+      await axios.put(`${process.env.REACT_APP_API_URL}api/update-employee-salary-details`, updatedData);
       toast.success('Salary details updated successfully!');
       setEditedRows(new Set());
     } catch (error) {

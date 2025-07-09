@@ -23,7 +23,7 @@ const EmployeeSalaryLeave = () => {
 
   useEffect(() => {
     axios
-      .get("http://13.51.149.114:8000/api/employee-salary-leave")
+      .get(`${process.env.REACT_APP_API_URL}api/employee-salary-leave`)
       .then((res) => {
         const updated = res.data.map((row) => ({
           ...row,
@@ -79,7 +79,7 @@ const EmployeeSalaryLeave = () => {
     updateData.approved_dates = row.approved_dates;
 
     axios
-      .put(`http://13.51.149.114:8000/api/employee-salary-leave/${row.employee_id}`, updateData)
+      .put(`${process.env.REACT_APP_API_URL}api/employee-salary-leave/${row.employee_id}`, updateData)
       .then(() => {
         const updated = [...data];
         updated[index].isEditing = false;
