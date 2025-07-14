@@ -137,34 +137,6 @@ export default function EmployeeForm({ onClose }) {
   }, [newEmployee.employee_DOJ]);
 
 
-  // const fetchCompaniesByCountry = async (country) => {
-  //   if (!country) return;
-  //   try {
-  //     const response = await axios.get(process.env.REACT_APP_API_URL + `api/companiesbycounty/${country}`);
-  //     setCompanies(response.data);
-  //   } catch (error) {
-  //     console.error('Error fetching companies:', error);
-  //   }
-  // };
-
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setNewEmployee((prev) => {
-  //     let updatedEmployee = { ...prev, [name]: value };
-
-  //     if (name === "employee_country") {
-  //       updatedEmployee = { ...updatedEmployee, employee_working_company: '' };
-  //       fetchCompaniesByCountry(value);
-  //     }
-
-  //     if (name === "employee_working_company") {
-  //       const selectedCompany = companies.find(company => company.company_name === value);
-  //       updatedEmployee = { ...updatedEmployee, company_id: selectedCompany ? selectedCompany.company_id : '' };
-  //     }
-
-  //     return updatedEmployee;
-  //   });
-  // };
 
   const handleInputChange = (e) => {
     const { name, type, checked, value } = e.target;

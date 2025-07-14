@@ -1,6 +1,9 @@
 const dbConn = require("../config/DB");
 const fs = require("fs");
 const path = require("path");
+const xlsx = require('xlsx');
+const excelService = require("../services/ExcelServices");
+
 const {
     getEmployeeDesignation,
     getAllEmployees: getAllEmployeesFromModel,
@@ -15,8 +18,11 @@ const {
     updateEmployeeProfilePicture,
     addEmployeeDocuments,
     getEmployeeFiles: getEmployeeFilesFromDB,
-    removeEmployeeDocument
+    removeEmployeeDocument,
+    uploadEmployee
 } = require('../models/employeeModel');
+
+
 
 // ================= DATE HANDLING FUNCTIONS =================
 const formatDateForDB = (dateString) => {
@@ -392,46 +398,28 @@ const createEmployee = async (req, res) => {
 
 
 
-// const createEmployee = async (req, res) => {
-//     try {
-//         await dbConn.query('BEGIN');
+// file upload and download template
 
-//         const {
-//             employee_name, employee_email, employee_mobile_number, employee_gender,
-//             employee_country, employee_city, employee_working_company, employee_DOJ,
-//             employee_designation, employee_status, work_type, relationship_type,
-//             employee_ctc, employee_username, employee_password, company_id
-//         } = req.body;
 
-//         const employeeQuery = `
-//             INSERT INTO employee_list (
-//                 employee_name, employee_email, employee_mobile_number, employee_gender,
-//                 employee_country, employee_city, employee_working_company, employee_DOJ,
-//                 employee_designation, employee_status, work_type, relationship_type,
-//                 employee_ctc, employee_username, employee_password, company_id, employee_lwd,
-//                 profile_picture, documents
-//             ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, NULL, NULL, '[]'::json)
-//             RETURNING employee_id;
-//         `;
+const downloadTemplatefroEmployee = async (req, res) => {
+    try {
+        const workbook = await excelService.generateAddEmployeeTemplateWorkbook();
 
-//         const employeeValues = [
-//             employee_name, employee_email, employee_mobile_number, employee_gender,
-//             employee_country, employee_city, employee_working_company, employee_DOJ,
-//             employee_designation, employee_status, work_type, relationship_type,
-//             employee_ctc, employee_username, employee_password, company_id
-//         ];
+        res.setHeader(
+            "Content-Type",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        );
+        res.setHeader(
+            "Content-Disposition",
+            "attachment; filename=Upload_employee_details.xlsx"
+        );
 
-//         const result = await dbConn.query(employeeQuery, employeeValues);
-//         const employee_id = result.rows[0].employee_id;
-
-//         await dbConn.query('COMMIT');
-//         res.status(201).json({ message: 'Employee created successfully' });
-//     } catch (error) {
-//         await dbConn.query('ROLLBACK');
-//         console.error("Create employee error:", error);
-//         res.status(500).json({ message: 'Failed to create employee' });
-//     }
-// };
+        await workbook.xlsx.write(res);
+        res.end();
+    } catch (err) {
+        res.status(500).json({ error: "Failed to generate template" });
+    }
+};
 
 const deleteEmployee = async (req, res) => {
     try {
@@ -568,6 +556,85 @@ const deleteProfilePicture = async (req, res) => {
     }
 };
 
+
+const uploadEmployeeExcel = async (req, res) => {
+    console.log("Uploading employee Excel file...");
+    try {
+
+        console.log("Received file:", req.file);
+        const { companyId } = req.body;
+
+        if (!req.file) {
+            return res.status(400).json({ error: "No file uploaded" });
+        }
+
+        const filePath = req.file.path;
+        console.log("File Path:", filePath);
+
+        // Read the Excel file
+        const workbook = xlsx.readFile(filePath);
+        const sheet_name_list = workbook.SheetNames;
+        if (!sheet_name_list.length) {
+            throw new Error("No sheets found in the Excel file");
+        }
+
+        const sheet = workbook.Sheets[sheet_name_list[0]];
+        const jsonData = xlsx.utils.sheet_to_json(sheet, { defval: "" });
+
+        console.log("Parsed Excel Data:", jsonData);
+
+        if (!jsonData.length) {
+            throw new Error("Excel file is empty or not properly formatted");
+        }
+
+        let insertedRows = 0; // Counter for successfully inserted rows
+
+        for (const row of jsonData) {
+            if (!row['Employee Name']) {
+                console.error("Skipping row due to missing Employee Name:", row);
+                continue;
+            }
+
+            const employeeData = {
+                EmployeeName: row['Employee Name'] || null,
+                EmployeeEmail: row['Employee email'] || null,
+                EmployeeMobile_number: row['Employee Mobile_number'] || null,
+                EmployeeGender: row['Employee Gender'] || null,
+                EmployeeCountry: row['Employee Country'] || null,
+                EmployeeCity: row['Employee City'] || null,
+                EmployeeWorking_company: row['Employee Working_company'] || null,
+                EmployeeDOJ: row['Employee DOJ'] || null,
+                EmployeeDesignation: row['Employee Designation'] || null,
+                EmployeeStatus: row['Employee Status'] || null,
+                WorkType: row['Work Type'] || null,
+                RelationshipType: row['Relationship Type'] || null,
+                EmployeeCTC: row['Employee CTC'] || null,
+                Employeeusername: row['Employee username'] || null,
+                EmployeePassword: row['Employee Password'] || null,
+                company_id: companyId
+            };
+
+            console.log("Inserted employee data:", employeeData);
+            await uploadEmployee(employeeData);
+            insertedRows++;
+        }
+
+        res.status(200).json({
+            success: true,
+            insertedRows: insertedRows,
+            message: `${insertedRows} employee added successfully!`
+        });
+
+    } catch (error) {
+        console.error("Error processing file:", error);
+        res.status(500).json({
+            success: false,
+            error: "Error processing file: " + error.message
+        });
+    }
+};
+
+
 module.exports = {
     getAllEmployeeDesignation,
     getEmployeeDetail,
@@ -585,621 +652,7 @@ module.exports = {
     uploadDocuments,
     getEmployeeFiles,
     deleteEmployeeDocument,
-    deleteProfilePicture
+    deleteProfilePicture,
+    downloadTemplatefroEmployee,
+    uploadEmployeeExcel
 };
-
-
-
-
-
-
-
-{/*const dbConn = require("../config/DB");
-const {
-    getEmployeeDesignation,
-    getAllEmployees,
-    getWorkAssignedCompany,
-    getAssignedEmployees,
-    getNotAssignedEmployees,
-    addEmployee,
-    assignCompanies,
-    changeAssignCompanies,
-    deleteEmployeById
-} = require('../models/employeeModel');
-
-const getAllEmployeeDesignation = async (req, res) => {
-    try {
-        const EmployeeDesignation = await getEmployeeDesignation();
-        res.status(200).json(EmployeeDesignation);
-    } catch (error) {
-        console.error("Database query error:", error);
-        res.status(500).json({ message: "Internal server error" });
-    }
-};
-
-const getAllEmployeeDetails = async (req, res) => {
-    try {
-        const { companyId, country, role } = req.user;
-
-        if (role !== "admin") {
-            return res.status(403).json({ message: "Access denied" });
-        }
-
-        const AllEmployeeDetails = await getAllEmployees(companyId, country);
-        res.status(200).json(AllEmployeeDetails);
-    } catch (error) {
-        console.error("Database query error:", error);
-        res.status(500).json({ message: "Internal server error" });
-    }
-};
-
-const getAllWorkAssignedCompany = async (req, res) => {
-    try {
-        const AllWorkAssignedCompany = await getWorkAssignedCompany();
-        res.status(200).json(AllWorkAssignedCompany);
-    } catch (error) {
-        console.error("Database query error:", error);
-        res.status(500).json({ message: "Internal server error" });
-    }
-};
-
-const getWorkAssignedEmployeesList = async (req, res) => {
-    try {
-        const { companyId, country } = req.query;
-        const AllWorkAssignedEmployees = await getAssignedEmployees(companyId, country);
-        res.status(200).json(AllWorkAssignedEmployees);
-    } catch (error) {
-        console.error("Database query error:", error);
-        res.status(500).json({ message: "Internal server error" });
-    }
-};
-
-const getWorkNotAssignedEmployeesList = async (req, res) => {
-    try {
-        const { companyId, country } = req.query;
-        const AllWorkNotAssignedEmployees = await getNotAssignedEmployees(companyId, country);
-        res.status(200).json(AllWorkNotAssignedEmployees);
-    } catch (error) {
-        console.error("Database query error:", error);
-        res.status(500).json({ message: "Internal server error" });
-    }
-};
-
-// ✅ Update full employee (for frontend Save button)
-const updateEmployee = async (req, res) => {
-    try {
-        const {
-            employee_id,
-            employee_name,
-            employee_working_company,
-            employee_designation,
-            work_type,
-            employee_ctc,
-            employee_gender,
-            employee_status,
-            relationship_type,
-            employee_username,
-            employee_password,
-            employee_email,
-            employee_mobile_number
-        } = req.body;
-
-        if (!employee_id) {
-            return res.status(400).json({ message: "Employee ID is required" });
-        }
-
-        const query = `
-            UPDATE employee_list SET
-                employee_name = $1,
-                employee_working_company = $2,
-                employee_designation = $3,
-                work_type = $4,
-                employee_ctc = $5,
-                employee_gender = $6,
-                employee_status = $7,
-                relationship_type = $8,
-                employee_username = $9,
-                employee_password = $10,
-                employee_email = $11,
-                employee_mobile_number = $12
-            WHERE employee_id = $13
-            RETURNING *;
-        `;
-
-        const values = [
-            employee_name,
-            employee_working_company,
-            employee_designation,
-            work_type,
-            employee_ctc,
-            employee_gender,
-            employee_status,
-            relationship_type,
-            employee_username,
-            employee_password,
-            employee_email,
-            employee_mobile_number,
-            employee_id
-        ];
-
-        const result = await dbConn.query(query, values);
-
-        if (result.rowCount === 0) {
-            return res.status(404).json({ message: "Employee not found" });
-        }
-
-        res.status(200).json({
-            message: "Employee updated successfully",
-            employee: result.rows[0]
-        });
-    } catch (error) {
-        console.error("Error updating employee:", error);
-        res.status(500).json({ message: "Internal server error" });
-    }
-};
-
-const updateEmployeeField = async (req, res) => {
-    try {
-        const { employeeId, field, value } = req.body;
-
-        if (!employeeId || !field || value === undefined) {
-            return res.status(400).json({ message: "Invalid data provided" });
-        }
-
-        const query = `UPDATE employee_list SET ${field} = $1 WHERE employee_id = $2 RETURNING *`;
-        const values = [value, employeeId];
-
-        const result = await dbConn.query(query, values);
-
-        if (result.rowCount === 0) {
-            return res.status(404).json({ message: 'Employee not found' });
-        }
-
-        res.status(200).json({ message: 'Employee updated successfully', employee: result.rows[0] });
-    } catch (error) {
-        console.error("Error updating employee field:", error);
-        res.status(500).json({ message: 'Internal server error' });
-    }
-};
-
-const createEmployee = async (req, res) => {
-    try {
-        await dbConn.query('BEGIN');
-
-        const {
-            employee_name, employee_email, employee_mobile_number, employee_gender, employee_country, employee_city,
-            employee_working_company, employee_DOJ, employee_designation, employee_status, work_type, relationship_type,
-            employee_ctc, employee_username, employee_password, company_id, payment_done, month, month_date, year,
-            basic_salary, hra, pf, tds, advance_payback, remarks, conveyance_allowances, medical_reimbursement
-        } = req.body;
-
-        const employeeQuery = `
-            INSERT INTO employee_list (
-            employee_name, employee_email, employee_mobile_number, employee_gender, employee_country, employee_city,
-            employee_working_company, employee_DOJ, employee_designation, employee_status, work_type, relationship_type, employee_ctc,
-            employee_username, employee_password, company_id
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING employee_id;
-        `;
-
-        const employeeValues = [
-            employee_name, employee_email, employee_mobile_number, employee_gender, employee_country, employee_city,
-            employee_working_company, employee_DOJ, employee_designation, employee_status, work_type, relationship_type,
-            employee_ctc, employee_username, employee_password, company_id
-        ];
-
-        const result = await dbConn.query(employeeQuery, employeeValues);
-        const employee_id = result.rows[0].employee_id;
-
-        const formatValue = (value) => {
-            return value === undefined || value === null ? null : !isNaN(value) ? Number(value) : value;
-        };
-
-        const salaryDetails = [
-            payment_done, month, month_date, year, relationship_type,
-            employee_id, employee_username, employee_DOJ,
-            formatValue(basic_salary), formatValue(hra), formatValue(conveyance_allowances),
-            formatValue(medical_reimbursement), formatValue(pf), formatValue(tds),
-            formatValue(advance_payback), formatValue(remarks)
-        ];
-
-        const salaryQuery = `
-            INSERT INTO employee_salary_details (
-                payment_done, month, month_date, year, relationship_type,
-                employee_id, employee_name, doj, basic_salary, hra, conveyance_allowances,
-                medical_reimbursement, pf, tds, advance_payback, remarks
-            ) 
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, NULLIF($16, ''))
-            ON CONFLICT (employee_id) 
-            DO UPDATE SET
-                payment_done = EXCLUDED.payment_done,
-                month = EXCLUDED.month,
-                month_date = EXCLUDED.month_date,
-                year = EXCLUDED.year,
-                relationship_type = EXCLUDED.relationship_type,
-                employee_name = EXCLUDED.employee_name,
-                doj = EXCLUDED.doj,
-                basic_salary = EXCLUDED.basic_salary,
-                hra = EXCLUDED.hra,
-                conveyance_allowances = EXCLUDED.conveyance_allowances,
-                medical_reimbursement = EXCLUDED.medical_reimbursement,
-                pf = EXCLUDED.pf,
-                tds = EXCLUDED.tds,
-                advance_payback = EXCLUDED.advance_payback,
-                remarks = EXCLUDED.remarks,
-                gross_salary = EXCLUDED.basic_salary + EXCLUDED.hra + EXCLUDED.conveyance_allowances + EXCLUDED.medical_reimbursement,
-                total_deductions = EXCLUDED.pf + EXCLUDED.tds + EXCLUDED.advance_payback,
-                net_payable_salary = (EXCLUDED.basic_salary + EXCLUDED.hra + EXCLUDED.conveyance_allowances + EXCLUDED.medical_reimbursement) 
-                                    - (EXCLUDED.pf + EXCLUDED.tds + EXCLUDED.advance_payback);
-        `;
-
-        await dbConn.query(salaryQuery, salaryDetails);
-        await dbConn.query('COMMIT');
-
-        res.status(201).json({ message: 'Employee registered successfully' });
-    } catch (error) {
-        await dbConn.query('ROLLBACK');
-        console.error("Transaction error:", error);
-        res.status(500).json({ error: 'Employee registration failed' });
-    }
-};
-
-const deleteEmployee = async (req, res) => {
-    try {
-        const { employee_id } = req.query;
-        if (!employee_id) {
-            return res.status(400).json({ error: "Employee ID is required" });
-        }
-
-        await deleteEmployeById(employee_id);
-        res.json({ message: "Employee deleted successfully." });
-    } catch (error) {
-        console.error("Database query error:", error);
-        res.status(500).json({ error: "Error deleting employee." });
-    }
-};
-
-const assignEmployeeCompanies = async (req, res) => {
-    try {
-        const { employee_id, country, companies } = req.body;
-
-        if (!employee_id || !country || !companies) {
-            return res.status(400).json({ message: "Employee ID, country, and companies are required" });
-        }
-
-        await assignCompanies(employee_id, country, companies);
-        res.status(200).json({ message: "Companies assigned successfully" });
-    } catch (error) {
-        console.error("Error assigning companies:", error);
-        res.status(500).json({ message: "Internal server error" });
-    }
-};
-
-const updateEmployeeAssignment = async (req, res) => {
-    try {
-        const { employee_id, country, companies } = req.body;
-
-        if (!employee_id || !country || !companies) {
-            return res.status(400).json({ message: "Employee ID, country, and companies are required" });
-        }
-
-        await changeAssignCompanies(employee_id, country, companies);
-        res.status(200).json({ message: "Assigned companies updated successfully" });
-    } catch (error) {
-        console.error("Error updating assigned companies:", error);
-        res.status(500).json({ message: "Internal server error" });
-    }
-};
-
-// ✅ Final Export
-module.exports = {
-    getAllEmployeeDesignation,
-    getAllEmployeeDetails,
-    getAllWorkAssignedCompany,
-    getWorkAssignedEmployeesList,
-    getWorkNotAssignedEmployeesList,
-    createEmployee,
-    updateEmployee,               // 👈 Added full update function
-    updateEmployeeField,
-    assignEmployeeCompanies,
-    updateEmployeeAssignment,
-    deleteEmployee
-};
-*/}
-
-
-
-
-
-
-
-
-
-{/*const dbConn = require("../config/DB");
-const express = require("express");
-const app = express();
-app.use(express.json());
-
-const { getEmployeeDesignation, getAllEmployees, getWorkAssignedCompany, getAssignedEmployees,
-    getNotAssignedEmployees, addEmployee, assignCompanies, changeAssignCompanies, deleteEmployeById } = require('../models/employeeModel');
-
-const getAllEmployeeDesignation = async (req, res) => {
-    try {
-        console.log('DB entered to designation....');
-
-        const EmployeeDesignation = await getEmployeeDesignation(); // Fetch data using the model function
-
-        res.status(200).json(EmployeeDesignation);
-    } catch (error) {
-        console.error("Database query error:", error);
-        res.status(500).json({ message: "Internal server error" });
-    }
-};
-
-const getAllEmployeeDetails = async (req, res) => {
-    try {
-        console.log('DB entered to employee list....');
-        const { companyId, country, role } = req.user;
-        console.log(`companyID: ${companyId}, role: ${role}`);
-
-        // Restrict access: Only "admin" roles can access employee details
-        if (role !== "admin") {
-            return res.status(403).json({ message: "Access denied" });
-        }
-
-        // Fetch only employees of the logged-in user's company
-        const AllEmployeeDetails = await getAllEmployees(companyId, country);
-
-        res.status(200).json(AllEmployeeDetails);
-    } catch (error) {
-        console.error("Database query error:", error);
-        res.status(500).json({ message: "Internal server error" });
-    }
-};
-
-
-const getAllWorkAssignedCompany = async (req, res) => {
-    try {
-        console.log('DB entered to work_assign_company_list....');
-
-        const AllWorkAssignedCompany = await getWorkAssignedCompany(); // Fetch data using the model function
-
-        res.status(200).json(AllWorkAssignedCompany);
-    } catch (error) {
-        console.error("Database query error:", error);
-        res.status(500).json({ message: "Internal server error" });
-    }
-};
-
-const getWorkAssignedEmployeesList = async (req, res) => {
-    try {
-        console.log('DB entered to work_assign_employees....');
-        const { companyId, country } = req.query;
-
-        const AllWorkAssignedEmployees = await getAssignedEmployees(companyId, country); // Fetch data using the model function
-
-        res.status(200).json(AllWorkAssignedEmployees);
-    } catch (error) {
-        console.error("Database query error:", error);
-        res.status(500).json({ message: "Internal server error" });
-    }
-
-};
-
-const getWorkNotAssignedEmployeesList = async (req, res) => {
-    try {
-        console.log('DB entered to work_assign_employees....');
-
-        const { companyId, country } = req.query;
-
-        const AllWorkNotAssignedEmployees = await getNotAssignedEmployees(companyId, country); // Fetch data using the model function
-
-        res.status(200).json(AllWorkNotAssignedEmployees);
-    } catch (error) {
-        console.error("Database query error:", error);
-        res.status(500).json({ message: "Internal server error" });
-    }
-
-};
-
-// const createEmployee = async (req, res) => {
-//     try {
-//         const {
-//             employee_name, employee_email, employee_mobile_number, employee_gender, employee_country, employee_city,
-//             employee_working_company, employee_DOJ, employee_designation, employee_status, work_type, relationship_type, employee_ctc,
-//             employee_username, employee_password, company_id
-//         } = req.body;
-
-//         // Basic input validation
-//         if (!employee_name || !employee_username || !employee_password) {
-//             return res.status(400).json({ message: "Employee name, username, and password are required" });
-//         }
-
-//         await addEmployee({
-//             employee_name, employee_email, employee_mobile_number, employee_gender, employee_country, employee_city,
-//             employee_working_company, employee_DOJ, employee_designation, employee_status, work_type, relationship_type, employee_ctc,
-//             employee_username, employee_password, company_id
-//         });
-
-//         res.status(201).json({ message: "Employee added successfully!" });
-
-//     } catch (error) {
-//         console.error("Database query error:", error);
-//         res.status(500).json({ message: "Internal server error" });
-//     }
-// };
-
-const createEmployee = async (req, res) => {
-    // const client = await dbConn.connect(); // Get a client connection
-    try {
-        await dbConn.query('BEGIN'); // Start transaction
-        console.log("🔄 Transaction started...");
-
-        const {
-            employee_name, employee_email, employee_mobile_number, employee_gender, employee_country, employee_city,
-            employee_working_company, employee_DOJ, employee_designation, employee_status, work_type, relationship_type,
-            employee_ctc, employee_username, employee_password, company_id, payment_done, month, month_date, year,
-            basic_salary, hra, pf, tds, advance_payback, remarks, conveyance_allowances, medical_reimbursement
-
-        } = req.body;
-
-        console.log("📩 Received Employee Data:", req.body);
-
-        // Insert into employee_list and get the generated employee_id
-        const employeeQuery = `
-            INSERT INTO employee_list (
-            employee_name, employee_email, employee_mobile_number, employee_gender, employee_country, employee_city,
-            employee_working_company, employee_DOJ, employee_designation, employee_status, work_type, relationship_type, employee_ctc,
-            employee_username, employee_password, company_id
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING employee_id;
-        `;
-        const employeeValues = [
-            employee_name, employee_email, employee_mobile_number, employee_gender, employee_country, employee_city,
-            employee_working_company, employee_DOJ, employee_designation, employee_status, work_type, relationship_type,
-            employee_ctc, employee_username, employee_password, company_id
-        ];
-
-        const result = await dbConn.query(employeeQuery, employeeValues);
-        const employee_id = result.rows[0].employee_id; // Get the auto-generated employee_id
-
-        console.log(`✅ Employee inserted successfully with ID: ${employee_id}`);
-
-        const formatValue = (value) => {
-            if (value === undefined || value === null) {
-                return null;  // Convert empty values to NULL
-            }
-            return !isNaN(value) ? Number(value) : value; // Convert numeric strings to numbers
-        };
-
-        const salaryDetails = [
-            payment_done,
-            month,
-            month_date,
-            year,
-            relationship_type,
-            employee_id,
-            employee_username,
-            employee_DOJ,
-            formatValue(basic_salary),
-            formatValue(hra),
-            formatValue(conveyance_allowances),
-            formatValue(medical_reimbursement),
-            formatValue(pf),
-            formatValue(tds),
-            formatValue(advance_payback),
-            formatValue(remarks),
-        ];
-
-
-        // Insert into employee_salary_details
-        const salaryQuery = `
-            INSERT INTO employee_salary_details (
-                payment_done, month, month_date, year, relationship_type,
-                employee_id, employee_name, doj, basic_salary, hra, conveyance_allowances,
-                medical_reimbursement, pf, tds, advance_payback, remarks
-            ) 
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, NULLIF($16, ''))
-            ON CONFLICT (employee_id) 
-            DO UPDATE SET
-                payment_done = EXCLUDED.payment_done,
-                month = EXCLUDED.month,
-                month_date = EXCLUDED.month_date,
-                year = EXCLUDED.year,
-                relationship_type = EXCLUDED.relationship_type,
-                employee_name = EXCLUDED.employee_name,
-                doj = EXCLUDED.doj,
-                basic_salary = EXCLUDED.basic_salary,
-                hra = EXCLUDED.hra,
-                conveyance_allowances = EXCLUDED.conveyance_allowances,
-                medical_reimbursement = EXCLUDED.medical_reimbursement,
-                pf = EXCLUDED.pf,
-                tds = EXCLUDED.tds,
-                advance_payback = EXCLUDED.advance_payback,
-                remarks = EXCLUDED.remarks,
-                -- Manually trigger salary calculations
-                gross_salary = EXCLUDED.basic_salary + EXCLUDED.hra + EXCLUDED.conveyance_allowances + EXCLUDED.medical_reimbursement,
-                total_deductions = EXCLUDED.pf + EXCLUDED.tds + EXCLUDED.advance_payback,
-                net_payable_salary = (EXCLUDED.basic_salary + EXCLUDED.hra + EXCLUDED.conveyance_allowances + EXCLUDED.medical_reimbursement) 
-                                    - (EXCLUDED.pf + EXCLUDED.tds + EXCLUDED.advance_payback);
-            `;
-
-        await dbConn.query(salaryQuery, salaryDetails);
-
-
-        console.log("📤 Inserting salary details:", salaryDetails);
-        await dbConn.query('COMMIT'); // Commit transaction
-        console.log("✅ Transaction committed successfully!");
-
-        res.status(201).json({ message: 'Employee registered successfully' });
-    } catch (error) {
-        await dbConn.query('ROLLBACK'); // Rollback if an error occurs
-        console.error("❌ Transaction error! Rolling back...", error);
-        res.status(500).json({ error: 'Employee registration failed' });
-    }
-};
-
-const deleteEmployee = async (req, res) => {
-    try {
-        const { employee_id } = req.query;
-        if (!employee_id) {
-            return res.status(400).json({ error: "Company ID is required" });
-        }
-
-        await deleteEmployeById(employee_id); // Ensure correct model function call
-        res.json({ message: "Company deleted successfully." });
-    } catch (error) {
-        console.error("Database query error:", error);
-        res.status(500).json({ error: "Error deleting company." });
-    }
-};
-
-const assignEmployeeCompanies = async (req, res) => {
-    try {
-        console.log("DB entered in assignCompanies .....");
-
-        const { employee_id, country, companies } = req.body;
-
-        console.log("Incoming Request Body:", req.body);
-
-        // Validate input
-        if (!employee_id || !country || !companies) {
-            return res.status(400).json({ message: "Employee ID, country, and companies are required" });
-        }
-
-        await assignCompanies(employee_id, country, companies);
-
-        res.status(201).json({ message: "Employee work assigned successfully!" });
-
-    } catch (error) {
-        console.error("Error assigning employee work:", error);
-        res.status(500).json({ message: "Internal server error" });
-    }
-};
-
-const updateEmployeeAssignment = async (req, res) => {
-    try {
-        console.log("Entered in changeAssignCompanies...");
-
-        const { employee_id, country, companies } = req.body;
-        console.log("Selected Employee ID:", employee_id);
-        console.log("Selected Country ID:", country);
-        console.log("Selected Companies:", companies);
-
-        if (!employee_id || !country || !companies) {
-            return res.status(400).json({ message: "Employee ID, country, and companies are required" });
-        }
-
-        const result = await changeAssignCompanies(employee_id, country, companies);
-
-        res.status(200).json(result);
-    } catch (error) {
-        console.error("Error updating employee assignment:", error);
-        res.status(500).json({ message: error.message });
-    }
-};
-
-
-
-module.exports = {
-    getAllEmployeeDesignation, getAllEmployeeDetails, getAllWorkAssignedCompany, getWorkAssignedEmployeesList,
-    getWorkNotAssignedEmployeesList, createEmployee, assignEmployeeCompanies, updateEmployeeAssignment, deleteEmployee
-};  */}

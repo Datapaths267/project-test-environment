@@ -191,6 +191,49 @@ exports.generateInterviewTrackerTemplateWorkbook = async () => {
     return workbook;
 };
 
+exports.generateAddEmployeeTemplateWorkbook = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("Add Employee Sheet");
+
+    sheet.columns = [
+        { header: "Employee Name", key: "employee_name", width: 25 },
+        { header: "Employee email", key: "employee_email", width: 20 },
+        { header: "Employee Mobile_number", key: "employee_mobile_number", width: 20 },
+        { header: "Employee Gender", key: "employee_gender", width: 20 },
+        { header: "Employee Country", key: "employee_country", width: 20 },
+        { header: "Employee City", key: "employee_city", width: 25 },
+        { header: "Employee Working_company", key: "employee_working_company", width: 15 },
+        { header: "Employee DOJ", key: "employee_DOJ", width: 20 },
+        { header: "Employee Designation", key: "employee_designation", width: 25 },
+        { header: "Employee Status", key: "employee_status", width: 25 },
+        { header: "Work Type", key: "work_type", width: 20 },
+        { header: "Relationship Type", key: "relationship_type", width: 25 },
+        { header: "Employee CTC", key: "employee_ctc", width: 15 },
+        { header: "Employee username", key: "employee_username", width: 20 },
+        { header: "Employee Password", key: "employee_password", width: 25 },
+    ];
+
+    sheet.addRow({
+        employee_name: "xxxxx",
+        employee_email: "xxx@gmail.com",
+        employee_mobile_number: "0000000000",
+        employee_gender: "male",
+        employee_country: "India",
+        employee_city: "Bnagalore",
+        employee_working_company: "XYZ Pvt Ltd",
+        employee_DOJ: "2025-04-11",
+        employee_designation: "Finance Admin",
+        employee_status: "Active",
+        work_type: "Onsite",
+        relationship_type: "Employee",
+        employee_ctc: "500000",
+        employee_username: "xxxxx",
+        employee_password: "123456"
+    });
+
+    return workbook;
+};
+
 exports.parseExcelFile = (filePath) => {
     const workbook = xlsx.readFile(filePath);
     const sheet = workbook.Sheets[workbook.SheetNames[0]];

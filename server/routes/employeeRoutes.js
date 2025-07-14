@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const authenticateUser = require("../middleware/authMiddleware");
-const { 
-    uploadProfilePic, 
-    uploadDocuments: multerUploadDocs 
+const {
+  uploadProfilePic,
+  uploadDocuments: multerUploadDocs
 } = require('../config/multerConfig');
+const upload = require('../middleware/uploadMiddleware');
 
 // Import controller methods as a single object
 const employeeController = require('../controllers/employeeController');
@@ -24,7 +25,7 @@ router.post('/assignCompanies', employeeController.assignEmployeeCompanies);
 router.post('/changeAssignCompanies', employeeController.updateEmployeeAssignment);
 
 // File upload routes
-router.post('/upload-profile-pic', 
+router.post('/upload-profile-pic',
   authenticateUser,
   uploadProfilePic,
   employeeController.uploadProfilePicture
@@ -35,6 +36,11 @@ router.post('/upload-documents',
   multerUploadDocs,
   employeeController.uploadDocuments
 );
+
+router.post("/upload-employee-excel", upload.single("file"), employeeController.uploadEmployeeExcel);
+
+// file upload 
+router.get("/download-template-for-employee", employeeController.downloadTemplatefroEmployee);
 
 // 🔹 PUT route
 router.put('/updateEmployee', authenticateUser, employeeController.updateEmployee);

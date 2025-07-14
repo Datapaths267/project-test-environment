@@ -9,6 +9,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import EmployeeForm from '../../forms/EmployeeForm';
 import SalaryPaidForm from '../../forms/SalaryPaidForm';
+import { FaDownload, FaEye, FaUpload, FaEdit, FaTrash } from "react-icons/fa";
+import * as XLSX from "xlsx"; // Import SheetJS for Excel handling
+import { useRef } from 'react';
 
 export default function LOEmployee() {
   const [employees, setEmployees] = useState([]);
@@ -29,6 +32,7 @@ export default function LOEmployee() {
   const [currentEmployeeId, setCurrentEmployeeId] = useState(null);
   const [filesToUpload, setFilesToUpload] = useState([]);
   const [loading, setLoading] = useState(true);
+  const fileInputRef = useRef(null); // Reference for hidden file input
 
   const [options, setOptions] = useState({
     status: [],
@@ -96,7 +100,7 @@ export default function LOEmployee() {
 
       const employeesWithFullUrls = response.data.map(employee => ({
         ...employee,
-        profile_picture: employee.profile_picture 
+        profile_picture: employee.profile_picture
           ? `${process.env.REACT_APP_API_URL}${employee.profile_picture}?${Date.now()}`
           : null,
         documents: employee.documents ? employee.documents.map(doc => ({
@@ -104,7 +108,7 @@ export default function LOEmployee() {
           url: doc.url ? `${process.env.REACT_APP_API_URL}${doc.url}` : null
         })) : []
       }));
-      
+
       setEmployees(employeesWithFullUrls);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -133,7 +137,7 @@ export default function LOEmployee() {
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("authToken")}`
         },
-        data: { 
+        data: {
           employee_id: employeeId,
           document_index: documentIndex
         }
@@ -163,11 +167,11 @@ export default function LOEmployee() {
     try {
       await Promise.all(
         [...selectedRows].map(async (employee_id) => {
-          await axios.delete(`${process.env.REACT_APP_API_URL}api/deleteEmployee`, { 
+          await axios.delete(`${process.env.REACT_APP_API_URL}api/deleteEmployee`, {
             headers: {
               "Authorization": `Bearer ${localStorage.getItem("authToken")}`
             },
-            params: { employee_id } 
+            params: { employee_id }
           });
         })
       );
@@ -193,10 +197,10 @@ export default function LOEmployee() {
   const handleSaveChanges = async () => {
     try {
       const updatedEmployeesData = employees.map(employee => {
-        const { employee_id, employee_name, employee_working_company, employee_designation, 
-                work_type, employee_ctc, employee_gender, employee_status, relationship_type, 
-                employee_username, employee_password, employee_email, employee_mobile_number, 
-                employee_leaving_date } = employee;
+        const { employee_id, employee_name, employee_working_company, employee_designation,
+          work_type, employee_ctc, employee_gender, employee_status, relationship_type,
+          employee_username, employee_password, employee_email, employee_mobile_number,
+          employee_leaving_date } = employee;
         return {
           employee_id,
           employee_name,
@@ -263,13 +267,13 @@ export default function LOEmployee() {
 
   const handleFileUpload = async () => {
     if (!filesToUpload.length) return;
-    
+
     try {
       const formData = new FormData();
-      const endpoint = uploadType === 'profile' 
-        ? 'api/upload-profile-pic' 
+      const endpoint = uploadType === 'profile'
+        ? 'api/upload-profile-pic'
         : 'api/upload-documents';
-      
+
       filesToUpload.forEach(file => {
         const fieldName = uploadType === 'profile' ? 'profile_picture' : 'documents';
         formData.append(fieldName, file);
@@ -313,6 +317,67 @@ export default function LOEmployee() {
     return matchesSearchTerm && matchesFilters;
   });
 
+  // Trigger hidden file input when button is clicked
+  const handleUploadClick = () => {
+    const confirmed = window.confirm("Do you want to download the Excel format before uploading?");
+    if (confirmed) {
+      // Trigger download
+      window.open(`${process.env.REACT_APP_API_URL}api/download-template-for-employee`, "_blank");
+    } else {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handlexslFileUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("companyId", companyId);
+
+    console.log("Uploading file:", file.name);
+    console.log("FormData Content:");
+    for (let pair of formData.entries()) {
+      console.log(pair[0], pair[1]);
+    }
+
+    try {
+      console.log("Sending request to upload employee Excel file...");
+      console.log("form data:", formData);
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}api/upload-employee-excel`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Company-ID": companyId // Pass it in headers if backend expects it
+        },
+        params: { companyId } // Also passing in params
+      });
+
+      console.log("Upload Response:", response.data);
+      if (response.data.status.success === true) {
+        toast.success("Customers added successfully!");
+      } else {
+        toast.error("Failed to insert customers.");
+      }
+      // fetchContacts();
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      toast.error("Failed to upload file.");
+    }
+  };
+
+  const handleDownloadExcel = () => {
+    if (employees.length === 0) {
+      toast.info("No employees available to download.");
+      return;
+    }
+
+    const ws = XLSX.utils.json_to_sheet(employees);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "employees");
+    XLSX.writeFile(wb, "employees_details.xlsx");
+  };
+
   return (
     <div className='ListofEmployee-container'>
       <h2>List of Employee</h2>
@@ -350,7 +415,22 @@ export default function LOEmployee() {
       <div className="buttons-container">
         <Button className="add-employee-btn" onClick={() => setShowForm(true)}>Add Employee</Button>
         <Button className="del-employee-btn" onClick={handleDeleteSelected} disabled={selectedRows.size === 0}>Delete Employee</Button>
-        <Button className="upload-excel-btn">Upload Employee Via Excel</Button>
+        {/* Upload Excel Button */}
+        <Button className="upload-contact-btn" onClick={handleUploadClick}>
+          <FaUpload /> Upload Contacts
+        </Button>
+        <input
+          type="file"
+          ref={fileInputRef}
+          style={{ display: "none" }} // Hidden input field
+          accept=".xlsx, .xls"
+          onChange={handlexslFileUpload}
+        />
+
+        {/* Download Excel Button */}
+        <Button className="download-contact-btn" onClick={handleDownloadExcel}>
+          <FaDownload /> Download Contact
+        </Button>
         <Button className="save-btn" onClick={handleSaveChanges}>Save Changes</Button>
       </div>
 
@@ -395,9 +475,9 @@ export default function LOEmployee() {
                 <button type="button" className="btn-close" onClick={() => setShowProfileModal(false)}></button>
               </div>
               <div className="modal-body text-center">
-                <img 
-                  src={currentProfilePic} 
-                  alt="Profile" 
+                <img
+                  src={currentProfilePic}
+                  alt="Profile"
                   style={{ maxWidth: '100%', maxHeight: '70vh' }}
                   onError={(e) => {
                     e.target.onerror = null;
@@ -407,9 +487,9 @@ export default function LOEmployee() {
                 />
               </div>
               <div className="modal-footer">
-                <button 
-                  type="button" 
-                  className="btn btn-secondary" 
+                <button
+                  type="button"
+                  className="btn btn-secondary"
                   onClick={() => setShowProfileModal(false)}
                 >
                   Close
@@ -443,15 +523,15 @@ export default function LOEmployee() {
                           <tr key={index}>
                             <td>{doc.name || `Document ${index + 1}`}</td>
                             <td>
-                              <a 
-                                href={doc.url} 
-                                target="_blank" 
-                                rel="noopener noreferrer" 
+                              <a
+                                href={doc.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 className="btn btn-sm btn-primary me-2"
                               >
                                 View
                               </a>
-                              <button 
+                              <button
                                 className="btn btn-sm btn-danger"
                                 onClick={() => {
                                   if (window.confirm('Are you sure you want to delete this document?')) {
@@ -472,9 +552,9 @@ export default function LOEmployee() {
                 )}
               </div>
               <div className="modal-footer">
-                <button 
-                  type="button" 
-                  className="btn btn-secondary" 
+                <button
+                  type="button"
+                  className="btn btn-secondary"
                   onClick={() => setShowDocumentsModal(false)}
                 >
                   Close
@@ -525,9 +605,9 @@ export default function LOEmployee() {
                 )}
               </div>
               <div className="modal-footer">
-                <button 
-                  type="button" 
-                  className="btn btn-secondary" 
+                <button
+                  type="button"
+                  className="btn btn-secondary"
                   onClick={() => {
                     setShowUploadModal(false);
                     setFilesToUpload([]);
@@ -682,8 +762,8 @@ export default function LOEmployee() {
                   backgroundColor: employee.employee_status !== 'Active' ? 'inherit' : '#f5f5f5'
                 }}
               >
-                {employee.employee_status === 'Active' ? '' : 
-                 (employee.employee_leaving_date ? employee.employee_leaving_date.split('T')[0] : "Still working")}
+                {employee.employee_status === 'Active' ? '' :
+                  (employee.employee_leaving_date ? employee.employee_leaving_date.split('T')[0] : "Still working")}
               </span>
               <span>
                 <select
@@ -735,7 +815,7 @@ export default function LOEmployee() {
               <span className="profile-pic-cell">
                 {employee.profile_picture ? (
                   <div className="profile-pic-actions">
-                    <button 
+                    <button
                       className="view-btn"
                       onClick={() => handleViewProfilePic(employee.profile_picture)}
                     >
@@ -749,7 +829,7 @@ export default function LOEmployee() {
                     </button>
                   </div>
                 ) : (
-                  <button 
+                  <button
                     className="upload-btn"
                     onClick={() => handleUploadProfilePic(employee.employee_id)}
                   >
@@ -763,13 +843,13 @@ export default function LOEmployee() {
                     <span className="badge bg-secondary">
                       {employee.documents.length} docs
                     </span>
-                    <button 
+                    <button
                       className="btn btn-sm btn-outline-primary ms-2"
                       onClick={() => handleViewDocuments(employee.employee_id)}
                     >
                       View
                     </button>
-                    <button 
+                    <button
                       className="btn btn-sm btn-outline-secondary ms-1"
                       onClick={() => handleUploadDocuments(employee.employee_id)}
                     >
@@ -777,7 +857,7 @@ export default function LOEmployee() {
                     </button>
                   </div>
                 ) : (
-                  <button 
+                  <button
                     className="btn btn-sm btn-primary"
                     onClick={() => handleUploadDocuments(employee.employee_id)}
                   >
