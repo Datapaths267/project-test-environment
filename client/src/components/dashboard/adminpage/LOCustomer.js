@@ -17,6 +17,17 @@ const CustomerList = () => {
   const [showForm, setShowForm] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const fileInputRef = useRef(null); // Reference for hidden file input
+  const [filters, setFilters] = useState({
+    customer_name: "",
+    customer_side_poc: "",
+    account_manager_poc: "",
+    customer_type: "",
+    msa_done: "",
+    nda_done: "",
+    agreement_type: "",
+    status: ""
+  });
+
 
   useEffect(() => {
     fetchCustomers();
@@ -59,43 +70,50 @@ const CustomerList = () => {
       return newSelected;
     });
   };
-
   const handleDeleteSelected = async () => {
     if (selectedRows.size === 0) {
       toast.error("Please select at least one customer to delete.");
       return;
     }
 
-    const token = localStorage.getItem("authToken"); // Retrieve auth token
-    const customerIds = Array.from(selectedRows); // Extract selected customer IDs
+    const token = localStorage.getItem("authToken");
+    const customerIds = Array.from(selectedRows);
 
     try {
-      // Delete each customer separately (if the API requires separate requests)
-      await Promise.all(
-        customerIds.map(async (customerId) => {
-          await axios.delete(
+      // Send delete requests and collect responses
+      const responses = await Promise.all(
+        customerIds.map((customerId) =>
+          axios.delete(
             `${process.env.REACT_APP_API_URL}customer/${customerId}/deleteCustomer`,
             {
               headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json"
-              }
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+              },
             }
-          );
-        })
+          )
+        )
       );
+
+      // Check if all responses have status 200
+      const allDeleted = responses.every((res) => res.status === 200);
+
+      if (allDeleted) {
+        toast.success("Customers deleted successfully!");
+      } else {
+        toast.error("Some customers may not have been deleted.");
+      }
 
       console.log("Deleted Customers:", customerIds);
 
-      // Refresh customer list after deletion
       fetchCustomers();
       setSelectedRows(new Set());
-
     } catch (error) {
       console.error("Error deleting customers:", error);
       toast.error("Failed to delete customers. Please try again.");
     }
   };
+
 
   const handleFileAction = async (customerId, action) => {
     try {
@@ -167,7 +185,13 @@ const CustomerList = () => {
 
   // Trigger hidden file input when button is clicked
   const handleUploadClick = () => {
-    fileInputRef.current.click();
+    const confirmed = window.confirm("Do you want to download the Excel format before uploading?");
+    if (confirmed) {
+      // Trigger download
+      window.open(`${process.env.REACT_APP_API_URL}customer/download-customer-template`, "_blank");
+    } else {
+      fileInputRef.current.click();
+    }
   };
 
   const handleFileUpload = async (event) => {
@@ -285,12 +309,111 @@ const CustomerList = () => {
     }
   };
 
+  const handleFilterChange = (field, value) => {
+    const updatedFilters = { ...filters, [field]: value };
+    setFilters(updatedFilters);
+
+    const filtered = customers.filter((customer) => {
+      return (
+        (updatedFilters.customer_name === "" || customer.customer_name.toLowerCase().includes(updatedFilters.customer_name.toLowerCase())) &&
+        (updatedFilters.customer_side_poc === "" || customer.customer_side_poc.toLowerCase().includes(updatedFilters.customer_side_poc.toLowerCase())) &&
+        (updatedFilters.account_manager_poc === "" || customer.account_manager_poc.toLowerCase().includes(updatedFilters.account_manager_poc.toLowerCase())) &&
+        (updatedFilters.customer_type === "" || customer.customer_type === updatedFilters.customer_type) &&
+
+        // ✅ Compare boolean fields as strings
+        (updatedFilters.msa_done === "" || String(customer.msa_done) === updatedFilters.msa_done) &&
+        (updatedFilters.nda_done === "" || String(customer.nda_done) === updatedFilters.nda_done) &&
+
+        (updatedFilters.agreement_type === "" || customer.agreement_type === updatedFilters.agreement_type) &&
+        (updatedFilters.status === "" || customer.status === updatedFilters.status)
+      );
+    });
+
+
+    setFilteredData(filtered);
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      customer_name: "",
+      customer_side_poc: "",
+      account_manager_poc: "",
+      customer_type: "",
+      msa_done: "",
+      nda_done: "",
+      agreement_type: "",
+      status: ""
+    });
+    setFilteredData(customers);
+  };
 
 
 
   return (
     <div className="customer-list-container">
       <h2>Customer Details</h2>
+      <div className="filters-container">
+        <input
+          type="text"
+          placeholder="Search Customer Name"
+          value={filters.customer_name}
+          onChange={(e) => handleFilterChange("customer_name", e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Search POC"
+          value={filters.customer_side_poc}
+          onChange={(e) => handleFilterChange("customer_side_poc", e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Search Account Manager"
+          value={filters.account_manager_poc}
+          onChange={(e) => handleFilterChange("account_manager_poc", e.target.value)}
+        />
+
+        <select onChange={(e) => handleFilterChange("customer_type", e.target.value)} value={filters.customer_type}>
+          <option value="">All Types</option>
+          <option value="Customer">Customer</option>
+          <option value="Lead">Lead</option>
+          <option value="Vendor">Vendor</option>
+          <option value="Channel Partner">Channel Partner</option>
+          <option value="Individual">Individual</option>
+        </select>
+
+        <select onChange={(e) => handleFilterChange("msa_done", e.target.value)} value={filters.msa_done}>
+          <option value="">MSA Done</option>
+          <option value="true">Yes</option>
+          <option value="false">No</option>
+        </select>
+
+        <select onChange={(e) => handleFilterChange("nda_done", e.target.value)} value={filters.nda_done}>
+          <option value="">NDA Done</option>
+          <option value="true">Yes</option>
+          <option value="false">No</option>
+        </select>
+
+
+        <select onChange={(e) => handleFilterChange("agreement_type", e.target.value)} value={filters.agreement_type}>
+          <option value="">All Agreement Types</option>
+          <option value="FTE">FTE</option>
+          <option value="C2H">C2H</option>
+          <option value="C2C">C2C</option>
+          <option value="All">All</option>
+        </select>
+
+        <select onChange={(e) => handleFilterChange("status", e.target.value)} value={filters.status}>
+          <option value="">All Statuses</option>
+          <option value="active">Active</option>
+          <option value="not active">Not Active</option>
+        </select>
+
+        <button className="clear-filter-btn" onClick={clearFilters}>
+          Clear Filters
+        </button>
+      </div>
+
+
       <Button className="add-customer-btn" onClick={() => setShowForm(true)}>
         Add Customer
       </Button>
@@ -461,7 +584,8 @@ const CustomerList = () => {
                   onChange={(e) =>
                     handleEdit(index, "status", e.target.value)}
                   className="filter-select"
-                  id={customer.status === 'active' ? 'active' : 'not_active'}
+                  id={customer.status?.toLowerCase() === 'active' ? 'active' : 'not_active'}
+
                 >
                   <option value={customer.status} > {customer.status}</option>
                   <option value="active">Active</option>

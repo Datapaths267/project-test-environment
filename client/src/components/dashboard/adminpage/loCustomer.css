@@ -174,3 +174,26 @@
 .modal-body {
     padding: 15px 0;
 }
+
+.filters-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.filters-container input,
+.filters-container select {
+    padding: 6px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.clear-filter-btn {
+    padding: 6px 12px;
+    background-color: #ff6666;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}

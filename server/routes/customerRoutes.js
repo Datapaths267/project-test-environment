@@ -3,7 +3,7 @@ const router = express.Router();
 const upload = require("../middleware/uploadMiddleware"); // Import multer config
 
 const authenticateUser = require("../middleware/authMiddleware");
-const { getCustomerDetail, deleteCustomers, getCustomerFiles, registerCustomer, uploadExcel, downloadExcel, getCustomerCompany, updateCustomer } = require("../controllers/customerController");
+const { getCustomerDetail, deleteCustomers, getCustomerFiles, registerCustomer, uploadExcel, downloadExcel, getCustomerCompany, updateCustomer, downloadcustomerTemplate } = require("../controllers/customerController");
 
 // Define routes
 router.get("/details", authenticateUser, getCustomerDetail);
@@ -16,6 +16,7 @@ router.post("/customer/register", upload.fields([
 router.post("/updateCustomer", upload.none(), updateCustomer);
 router.post("/upload", authenticateUser, upload.single("file"), uploadExcel);
 router.get("/download", downloadExcel);
+router.get("/download-customer-template", downloadcustomerTemplate);
 router.get("/customerCompany", authenticateUser, getCustomerCompany);
 
 module.exports = router; // ✅ Export the router

@@ -234,6 +234,53 @@ exports.generateAddEmployeeTemplateWorkbook = async () => {
     return workbook;
 };
 
+exports.generateAddCustomerTemplateWorkbook = async () => {
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("Add customer Sheet");
+
+    sheet.columns = [
+        { header: "customer_name", key: "customer_name", width: 25 },
+        { header: "company Type", key: "customer_type", width: 20 },
+        { header: "customer_side_poc", key: "customer_side_poc", width: 20 },
+        { header: "account_manager_poc", key: "account_manager_poc", width: 20 },
+        { header: "address", key: "address", width: 20 },
+        { header: "nda_done", key: "nda_done", width: 25 },
+        { header: "msa_done", key: "msa_done", width: 15 },
+        { header: "country", key: "country", width: 20 },
+        { header: "billing_currency", key: "billing_currency", width: 25 },
+        { header: "mail ID", key: "contacts", width: 25 },
+        { header: "status", key: "status", width: 20 },
+        { header: "agreement_type", key: "agreement_type", width: 25 },
+        { header: "fte_percentage", key: "fte_percentage", width: 20 },
+        { header: "invoice_period", key: "invoice_period", width: 25 },
+        { header: "customer_rating", key: "customer_rating", width: 25 },
+        { header: "rate_flag", key: "rate_flag", width: 20 },
+        { header: "req_rating", key: "req_rating", width: 25 }
+    ];
+
+    sheet.addRow({
+        customer_name: "xxxxx",
+        customer_type: "Customer, Vendor, Lead, Individual, Channel Person",
+        customer_side_poc: "xxxxxxxx",
+        account_manager_poc: "xxxxxxx",
+        address: "xxxxxxx",
+        nda_done: "yes/no",
+        msa_done: "yes/no",
+        country: "India",
+        billing_currency: "INR",
+        contacts: "xxxx@gmail.com",
+        status: "Active/Inactive",
+        agreement_type: "C2H, FTE, C2C, All",
+        fte_percentage: "12",
+        invoice_period: "3",
+        customer_rating: "1-5",
+        rate_flag: "1-5",
+        req_rating: "Good, Average, Tough"
+    });
+
+    return workbook;
+};
+
 exports.parseExcelFile = (filePath) => {
     const workbook = xlsx.readFile(filePath);
     const sheet = workbook.Sheets[workbook.SheetNames[0]];

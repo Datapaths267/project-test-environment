@@ -6,6 +6,7 @@ const multer = require("multer");
 const path = require("path");
 const Joi = require("joi");
 const dbConn = require("../config/DB");
+const excelService = require("../services/ExcelServices");
 
 const { custDetail, insertCustomer, getAllCustomers } = require("../models/customerModel");
 const Customer = require("../models/customerModel");
@@ -136,7 +137,7 @@ const uploadExcel = async (req, res) => {
 
             const customerData = {
                 customer: row['customer_name'] || null,
-                customer_type: row['customer_type'] || null,
+                customer_type: row['company Type'] || null,
                 customer_p_o_c: row['customer_side_poc'] || null,
                 account_manager_p_o_c: row['account_manager_poc'] || null,
                 address: row['address'] || null,
@@ -145,7 +146,7 @@ const uploadExcel = async (req, res) => {
                 country: row['country'] || null,
                 billing_currency: row['billing_currency'] || null,
                 documents: row['documents'] || null,
-                contacts: row['contacts'] || null,
+                contacts: row['mail ID'] || null,
                 status: row['status'] || null,
                 agreement_type: row['agreement_type'] || null,
                 fte_percentage: row['fte_percentage'] || null,
@@ -178,6 +179,7 @@ const uploadExcel = async (req, res) => {
 // 📌 2️⃣ Download Data as Excel
 const downloadExcel = async (req, res) => {
     try {
+        console.log("Preparing to download customer data as Excel...");
         const data = await getAllCustomers();
         const worksheet = xlsx.utils.json_to_sheet(data);
         const workbook = xlsx.utils.book_new();
@@ -192,6 +194,28 @@ const downloadExcel = async (req, res) => {
 
     } catch (error) {
         res.status(500).json({ error: "Data retrieval failed!", details: error });
+    }
+};
+
+
+const downloadcustomerTemplate = async (req, res) => {
+    try {
+        console.log("Generating customer template...");
+        const workbook = await excelService.generateAddCustomerTemplateWorkbook();
+
+        res.setHeader(
+            "Content-Type",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        );
+        res.setHeader(
+            "Content-Disposition",
+            "attachment; filename=customer_template.xlsx"
+        );
+
+        await workbook.xlsx.write(res);
+        res.end();
+    } catch (err) {
+        res.status(500).json({ error: "Failed to generate template" });
     }
 };
 
@@ -268,11 +292,11 @@ const deleteCustomers = async (req, res) => {
         }
 
         await Customer.deleteCustomer(customerId);
-        res.json({ message: "customer deleted successfully." });
+        res.status(200).json({ message: "customer deleted successfully." });
     } catch (error) {
         console.error("Database query error:", error);
         res.status(500).json({ error: "Error deleting customer." });
     }
 };
 
-module.exports = { getCustomerDetail, deleteCustomers, getCustomerCompany, getCustomerFiles, registerCustomer, uploadExcel, downloadExcel, updateCustomer };
+module.exports = { getCustomerDetail, downloadcustomerTemplate, deleteCustomers, getCustomerCompany, getCustomerFiles, registerCustomer, uploadExcel, downloadExcel, updateCustomer };
