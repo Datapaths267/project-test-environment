@@ -362,6 +362,7 @@ export default function LOEmployee() {
       console.log("Upload Response:", response.data);
       if (allSuccessful) {
         toast.success("Employee added successfully!");
+        getData();
       } else {
         toast.error("Failed to insert Employee.");
       }
