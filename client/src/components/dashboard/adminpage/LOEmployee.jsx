@@ -355,7 +355,7 @@ export default function LOEmployee() {
         params: { companyId } // Also passing in params
       });
 
-      if (response.status !== 201) {
+      if (!response.data.success) {
         allSuccessful = false;
       }
 
