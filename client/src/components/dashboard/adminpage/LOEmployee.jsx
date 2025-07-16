@@ -343,6 +343,8 @@ export default function LOEmployee() {
     }
 
     try {
+      let allSuccessful = true;
+
       console.log("Sending request to upload employee Excel file...");
       console.log("form data:", formData);
       const response = await axios.post(`${process.env.REACT_APP_API_URL}api/upload-employee-excel`, formData, {
@@ -353,11 +355,15 @@ export default function LOEmployee() {
         params: { companyId } // Also passing in params
       });
 
+      if (response.status !== 201) {
+        allSuccessful = false;
+      }
+
       console.log("Upload Response:", response.data);
-      if (response.data.status.success === true) {
-        toast.success("Customers added successfully!");
+      if (allSuccessful) {
+        toast.success("Employee added successfully!");
       } else {
-        toast.error("Failed to insert customers.");
+        toast.error("Failed to insert Employee.");
       }
       // fetchContacts();
     } catch (error) {
