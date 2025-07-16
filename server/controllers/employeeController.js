@@ -595,6 +595,18 @@ const uploadEmployeeExcel = async (req, res) => {
                 continue;
             }
 
+            const getDateFromExcel = (excelValue) => {
+                if (typeof excelValue === 'number') {
+                    // Convert Excel date serial number to JS date
+                    const date = new Date(Math.round((excelValue - 25569) * 86400 * 1000));
+                    return date.toISOString().split('T')[0]; // 'YYYY-MM-DD'
+                }
+                // If already a valid string, try parsing
+                const date = new Date(excelValue);
+                return isNaN(date) ? null : date.toISOString().split('T')[0];
+            };
+
+
             const employeeData = {
                 EmployeeName: row['Employee Name'] || null,
                 EmployeeEmail: row['Employee email'] || null,
@@ -603,7 +615,7 @@ const uploadEmployeeExcel = async (req, res) => {
                 EmployeeCountry: row['Employee Country'] || null,
                 EmployeeCity: row['Employee City'] || null,
                 EmployeeWorking_company: row['Employee Working_company'] || null,
-                EmployeeDOJ: row['Employee DOJ'] || null,
+                EmployeeDOJ: getDateFromExcel(row['Employee DOJ']),
                 EmployeeDesignation: row['Employee Designation'] || null,
                 EmployeeStatus: row['Employee Status'] || null,
                 WorkType: row['Work Type'] || null,

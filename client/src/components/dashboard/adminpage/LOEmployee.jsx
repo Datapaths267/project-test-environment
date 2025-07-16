@@ -417,7 +417,7 @@ export default function LOEmployee() {
         <Button className="del-employee-btn" onClick={handleDeleteSelected} disabled={selectedRows.size === 0}>Delete Employee</Button>
         {/* Upload Excel Button */}
         <Button className="upload-contact-btn" onClick={handleUploadClick}>
-          <FaUpload /> Upload Contacts
+          <FaUpload /> Upload Employee List
         </Button>
         <input
           type="file"
@@ -429,7 +429,7 @@ export default function LOEmployee() {
 
         {/* Download Excel Button */}
         <Button className="download-contact-btn" onClick={handleDownloadExcel}>
-          <FaDownload /> Download Contact
+          <FaDownload /> Download Employee List
         </Button>
         <Button className="save-btn" onClick={handleSaveChanges}>Save Changes</Button>
       </div>
