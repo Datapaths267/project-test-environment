@@ -25,6 +25,12 @@ const requirementTracker = {
         }
 
         const requirements = result.rows;
+        console.log("Fetched Requirements:", requirements);
+        if (requirements.length === 0) {
+            return [];
+        }
+        console.log("Requirements fetched successfully:", requirements);
+
 
         // 2. Loop through each requirement and check candidate's latest updated_at
         for (const req of requirements) {

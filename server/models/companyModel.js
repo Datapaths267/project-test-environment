@@ -114,9 +114,6 @@ const Company = {
         await dbConn.query("DELETE FROM company_registration WHERE company_id = $1", [companyId]);
     },
 
-
-
 };
-
 
 module.exports = Company;
