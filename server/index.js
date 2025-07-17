@@ -31,6 +31,13 @@ if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
 
+
+// ✅ Increase JSON body limit
+app.use(express.json({ limit: '10mb' }));
+
+// ✅ Also increase URL-encoded body size (for forms)
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
 // Middleware
 // app.use(cors());
 app.use(cors({ origin: "*", credentials: true }));
