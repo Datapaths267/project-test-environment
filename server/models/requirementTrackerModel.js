@@ -7,25 +7,25 @@ const requirementTracker = {
     allRequirementTrackerDetails: async (companyId, employeeId, designation) => {
         console.log("🔍 Fetching requirements for Company:", companyId, "Employee:", employeeId, "Designation:", designation);
 
-        // Step 1: Fetch requirements based on designation
+        // Step 1: Get base requirements depending on role
         const baseQuery = `
         SELECT * FROM requirements
-        WHERE company_id = $1 ${designation === 'Recruiter' ? 'AND recruiter_id = $2' : ''}
+        WHERE company_id = $1
+        ${designation === 'Recruiter' ? 'AND recruiter_id = $2' : ''}
     `;
         const baseParams = designation === 'Recruiter' ? [companyId, employeeId] : [companyId];
-        const result = await dbConn.query(baseQuery, baseParams);
-        const requirements = result.rows;
+        const baseResult = await dbConn.query(baseQuery, baseParams);
+        const requirements = baseResult.rows;
 
         if (requirements.length === 0) {
             console.log("❌ No requirements found.");
             return [];
         }
 
-        // Step 2: Loop through each requirement to check update time
+        // Step 2: Auto-close logic for old inactive requirements
         for (const req of requirements) {
             const reqId = req.req_id;
 
-            // Fetch latest interview update time
             const { rows } = await dbConn.query(`
             SELECT MAX(interview_status_updated_at) AS latest_update
             FROM candidate_tracker
@@ -45,12 +45,13 @@ const requirementTracker = {
                     SET status = 'Close'
                     WHERE req_id = $1
                 `, [reqId]);
-                    console.log(`⚠️ Requirement ${reqId} auto-closed (no activity for ${diffDays} days)`);
+
+                    console.log(`⚠️ Requirement ${reqId} auto-closed (inactive for ${diffDays} days)`);
                 }
             }
         }
 
-        // Step 3: Fetch updated requirement list
+        // Step 3: Return updated requirements
         const finalQuery = `
         SELECT 
             rt.req_id,

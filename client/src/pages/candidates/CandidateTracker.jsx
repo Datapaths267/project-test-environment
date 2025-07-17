@@ -764,15 +764,22 @@ export default function CandidateTracker() {
                                     handleEdit(index, "skill_mapping_rating", e.target.value)} /></span>
                                 <span>
                                     <select
-                                        value={Candidate.interview_status}
+                                        value={Candidate.interview_status || ""}
                                         onChange={(e) => handleEdit(index, "interview_status", e.target.value)}
                                         className="filter-select"
                                     >
-                                        {Candidate.interview_status && !options.interview_status.find(s => s.id === Candidate.interview_status) && (
-                                            <option value={Candidate.interview_status}>
-                                                {Candidate.interview_status}
-                                            </option>
-                                        )}
+                                        {/* Placeholder option shown only when no value is selected */}
+                                        <option value="" disabled>
+                                            Select Interview Status
+                                        </option>
+
+                                        {/* Handle unknown existing value */}
+                                        {Candidate.interview_status &&
+                                            !options.interview_status.find((s) => s.id === Candidate.interview_status) && (
+                                                <option value={Candidate.interview_status}>
+                                                    {Candidate.interview_status}
+                                                </option>
+                                            )}
 
                                         {/* Render all available options */}
                                         {options.interview_status.map((s, index) => (
@@ -782,6 +789,7 @@ export default function CandidateTracker() {
                                         ))}
                                     </select>
                                 </span>
+
 
                                 <span> {Candidate.recruiter_name}
                                 </span>
