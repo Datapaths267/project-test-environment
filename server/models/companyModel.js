@@ -5,7 +5,7 @@ app.use(express.json());
 
 const Company = {
     countryAll: async () => {
-        const query = "Select * from countries where status = true";
+        const query = "Select name from countries where status = true";
         const result = await dbConn.query(query);
         return result.rows;
     },
