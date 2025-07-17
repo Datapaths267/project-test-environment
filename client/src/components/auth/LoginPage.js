@@ -19,6 +19,7 @@ const LoginPage = ({ onLogin }) => {
   const navigate = useNavigate();
 
   const getData = async () => {
+    console.log("Fetching country data..."); // Debugging
     await axios.get(process.env.REACT_APP_API_URL + 'api/countryAll')
       .then(response => setData(response.data))
       .catch(error => console.error('Error fetching data:', error));
