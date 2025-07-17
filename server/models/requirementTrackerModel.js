@@ -4,65 +4,54 @@ const app = express();
 app.use(express.json());
 
 const requirementTracker = {
-    allRequirementTrackerDetails: async (companyId, employeeId, designation) => {
-        console.log("Company ID:", companyId);
-        console.log("Employee ID:", employeeId);
-        console.log("Designation:", designation);
+   allRequirementTrackerDetails: async (companyId, employeeId, designation) => {
+    console.log("🔍 Fetching requirements for Company:", companyId, "Employee:", employeeId, "Designation:", designation);
 
-        let result;
+    // Step 1: Fetch requirements based on designation
+    const baseQuery = `
+        SELECT * FROM requirements
+        WHERE company_id = $1 ${designation === 'Recruiter' ? 'AND recruiter_id = $2' : ''}
+    `;
+    const baseParams = designation === 'Recruiter' ? [companyId, employeeId] : [companyId];
+    const result = await dbConn.query(baseQuery, baseParams);
+    const requirements = result.rows;
 
-        // 1. Fetch requirements
-        if (designation === 'Recruiter') {
-            result = await dbConn.query(`
-            SELECT * FROM requirements
-            WHERE company_id = $1 AND recruiter_id = $2;
-        `, [companyId, employeeId]);
-        } else {
-            result = await dbConn.query(`
-            SELECT * FROM requirements
-            WHERE company_id = $1;
-        `, [companyId]);
-        }
+    if (requirements.length === 0) {
+        console.log("❌ No requirements found.");
+        return [];
+    }
 
-        const requirements = result.rows;
-        console.log("Fetched Requirements:", requirements);
-        if (requirements.length === 0) {
-            return [];
-        }
-        console.log("Requirements fetched successfully:", requirements);
+    // Step 2: Loop through each requirement to check update time
+    for (const req of requirements) {
+        const reqId = req.req_id;
 
-
-        // 2. Loop through each requirement and check candidate's latest updated_at
-        for (const req of requirements) {
-            const reqId = req.req_id;
-
-            // 3. Fetch the latest candidate updated_at for this requirement
-            const candidateResult = await dbConn.query(`
+        // Fetch latest interview update time
+        const { rows } = await dbConn.query(`
             SELECT MAX(interview_status_updated_at) AS latest_update
             FROM candidate_tracker
-            WHERE req_id = $1;
+            WHERE req_id = $1
         `, [reqId]);
 
-            const latestUpdate = candidateResult.rows[0].latest_update;
+        const latestUpdate = rows[0].latest_update;
 
-            if (latestUpdate) {
-                const reqDate = new Date(req.req_date);
-                const lastUpdateDate = new Date(latestUpdate);
-                const diffDays = Math.floor((lastUpdateDate - reqDate) / (1000 * 60 * 60 * 24));
+        if (latestUpdate) {
+            const reqDate = new Date(req.req_date);
+            const lastUpdateDate = new Date(latestUpdate);
+            const diffDays = Math.floor((lastUpdateDate - reqDate) / (1000 * 60 * 60 * 24));
 
-                // 4. If difference is more than 15 days, update status to 'Close'
-                if (diffDays > 15 && req.status !== 'Close') {
-                    await dbConn.query(`
+            if (diffDays > 15 && req.status !== 'Close') {
+                await dbConn.query(`
                     UPDATE requirements
                     SET status = 'Close'
-                    WHERE req_id = $1;
+                    WHERE req_id = $1
                 `, [reqId]);
-                }
+                console.log(`⚠️ Requirement ${reqId} auto-closed (no activity for ${diffDays} days)`);
             }
         }
+    }
 
-        // 5. Fetch updated list again (optional, if you want to return fresh values)
-        const finalResult = await dbConn.query(`
+    // Step 3: Fetch updated requirement list
+    const finalQuery = `
         SELECT 
             rt.req_id,
             rt.company_id,
@@ -92,13 +81,16 @@ const requirementTracker = {
         JOIN customer_contacts cd ON rt.poc_id = cd.contact_id
         JOIN employee_list emp ON rt.recruiter_id = emp.employee_id
         WHERE rt.company_id = $1
-        ${designation === 'Recruiter' ? `AND rt.recruiter_id = $2` : ''}
-        ORDER BY rt.req_id ASC;
-    `, designation === 'Recruiter' ? [companyId, employeeId] : [companyId]);
+        ${designation === 'Recruiter' ? 'AND rt.recruiter_id = $2' : ''}
+        ORDER BY rt.req_id ASC
+    `;
+    const finalParams = designation === 'Recruiter' ? [companyId, employeeId] : [companyId];
+    const finalResult = await dbConn.query(finalQuery, finalParams);
 
-        console.log("Final Requirements List:", finalResult.rows);
-        return finalResult.rows;
-    },
+    console.log("✅ Final Requirements List:", finalResult.rows.length, "items");
+    return finalResult.rows;
+},
+
 
     addRequirementTrackerDetails: async () => {
         const result = await dbConn.query(`
