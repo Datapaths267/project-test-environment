@@ -96,8 +96,8 @@ const requirementTracker = {
         ORDER BY rt.req_id ASC;
     `, designation === 'Recruiter' ? [companyId, employeeId] : [companyId]);
 
-        return finalResult.rows;
         console.log("Final Requirements List:", finalResult.rows);
+        return finalResult.rows;
     },
 
     addRequirementTrackerDetails: async () => {
