@@ -1,10 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
+import Button from '../../components/button/Button';
 import "./RecruiterReport.css";
 
 const RecruiterReport = () => {
     const [filteredData, setFilteredData] = useState([]);
     const [loading, setLoading] = useState(false);
+
+    // Filter states
+    const [monthFilter, setMonthFilter] = useState("");
+    const [managerFilter, setManagerFilter] = useState("");
+    const [recruiterFilter, setRecruiterFilter] = useState("");
+    const [customerFilter, setCustomerFilter] = useState("");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
 
     const token = localStorage.getItem("authToken");
     const companyId = localStorage.getItem("companyId");
@@ -39,8 +48,80 @@ const RecruiterReport = () => {
         return new Date(dateStr).toLocaleDateString('en-GB').replaceAll('/', '-');
     };
 
+    // Filtered data using all filters
+    const filteredTableData = useMemo(() => {
+        return filteredData.filter(item => {
+            const reqDate = item.req_date ? new Date(item.req_date) : null;
+            const start = startDate ? new Date(startDate) : null;
+            const end = endDate ? new Date(endDate) : null;
+
+            const inDateRange = (!reqDate || (!start && !end)) || (
+                (!start || reqDate >= start) && (!end || reqDate <= end)
+            );
+
+            return (
+                (monthFilter === "" || item.month?.toLowerCase() === monthFilter.toLowerCase()) &&
+                (managerFilter === "" || item.account_manager?.toLowerCase().includes(managerFilter.toLowerCase())) &&
+                (recruiterFilter === "" || item.recruiter?.toLowerCase().includes(recruiterFilter.toLowerCase())) &&
+                (customerFilter === "" || item.customer?.toLowerCase().includes(customerFilter.toLowerCase())) &&
+                inDateRange
+            );
+        });
+    }, [filteredData, monthFilter, managerFilter, recruiterFilter, customerFilter, startDate, endDate]);
+
+
+    const clearFilters = () => {
+        setMonthFilter("");
+        setManagerFilter("");
+        setRecruiterFilter("");
+        setCustomerFilter("");
+        setStartDate("");
+        setEndDate("");
+    };
+
     return (
         <div className="tracker-table-wrapper">
+            <h1>Recruiter Report</h1>
+
+            {/* Filter Inputs */}
+            <div className="filter-container">
+                <input
+                    type="text"
+                    placeholder="Filter by Month"
+                    value={monthFilter}
+                    onChange={(e) => setMonthFilter(e.target.value)}
+                />
+                <input
+                    type="text"
+                    placeholder="Filter by Account Manager"
+                    value={managerFilter}
+                    onChange={(e) => setManagerFilter(e.target.value)}
+                />
+                <input
+                    type="text"
+                    placeholder="Filter by Recruiter"
+                    value={recruiterFilter}
+                    onChange={(e) => setRecruiterFilter(e.target.value)}
+                />
+                <input
+                    type="text"
+                    placeholder="Filter by Customer"
+                    value={customerFilter}
+                    onChange={(e) => setCustomerFilter(e.target.value)}
+                />
+                <input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                />
+                <input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                />
+                <Button text="Clear Filters" onClick={clearFilters} > Clear Filters</Button>
+            </div>
+
             <table className="tracker-table">
                 <thead>
                     <tr>
@@ -72,10 +153,10 @@ const RecruiterReport = () => {
                 <tbody>
                     {loading ? (
                         <tr><td colSpan="18">Loading...</td></tr>
-                    ) : filteredData.length === 0 ? (
+                    ) : filteredTableData.length === 0 ? (
                         <tr><td colSpan="18">No data available</td></tr>
                     ) : (
-                        filteredData.map((item, index) => (
+                        filteredTableData.map((item, index) => (
                             <tr key={index}>
                                 <td className="col-year">{item.year}</td>
                                 <td className="col-month">{item.month}</td>

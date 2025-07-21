@@ -1,4 +1,5 @@
 .tracker-table-wrapper {
+    font-family: Brokman;
     overflow-x: auto;
     padding: 20px;
     background: #fff;
@@ -44,6 +45,19 @@
     font-weight: bold;
 }
 
+.filter-container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.filter-container input {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    min-width: 180px;
+}
 
 
 /* Column widths */

@@ -1,6 +1,6 @@
 .am-table-container {
     padding: 20px;
-    font-family: Arial, sans-serif;
+    font-family: Brokman;
 }
 
 .am-focus-table {
@@ -18,4 +18,16 @@
 .am-focus-table th {
     background-color: yellow;
     font-weight: bold;
+}
+
+.filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filter-bar select {
+    padding: 5px 10px;
+    font-size: 14px;
 }
