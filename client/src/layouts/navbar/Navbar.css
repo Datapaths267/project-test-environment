@@ -62,19 +62,33 @@
 
 /* User logo styling */
 .userlogo {
-  font-size: 40px;
+  display: flex;
+  font-size: 50px;
   margin-bottom: 5px;
   margin-top: 20px;
+  justify-content: center;
+  align-items: center;
+  color: white;
 }
 
 /* Search bar container */
 .search-container {
   display: flex;
+  justify-content: center;
   align-items: center;
+
+}
+
+.search-icon {
+  font-size: 15px;
+  color: white;
   background: #525151;
-  padding: 5px 10px;
-  border-radius: 5px;
+  padding: 2px;
+  border-radius: 8px;
   width: 80%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .search-container input {
@@ -82,11 +96,11 @@
   outline: none;
   background: transparent;
   color: white;
-  margin-left: 10px;
+  margin-left: 0px;
   width: 100%;
 }
 
-.search-icon {
+.search-icon1 {
   color: white;
 }
 

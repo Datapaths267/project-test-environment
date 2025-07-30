@@ -24,6 +24,7 @@ import SalaryLeave from "../../components/salary/SalaryLeave";
 import RecruiterReport from "../../pages/reports/RecruiterReport";
 import PerformanceReport from "../../pages/reports/PerformanceReport";
 import CandidateReport from "../../pages/reports/CandidateReport";
+import ProfilePage from "../../pages/ProfilePage/ProfilePage";
 
 export default function Dashboard({ userRole }) {
   return (
@@ -35,6 +36,7 @@ export default function Dashboard({ userRole }) {
       <div className="content">
         <Routes>
           {/* Public Pages */}
+          <Route path="/profile" element={<ProfilePage />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/contacts" element={<Contacts />} />
           <Route path="/requirements" element={<RequirementTracker />} />

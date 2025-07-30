@@ -11,6 +11,16 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 
+// Reusable Submenu Component
+const SubmenuToggle = ({ title, isOpen, toggleFunction, children }) => (
+  <>
+    <div onClick={toggleFunction} className="menu-item" style={{ cursor: "pointer" }}>
+      {title} <FontAwesomeIcon icon={isOpen ? faChevronUp : faChevronDown} />
+    </div>
+    {isOpen && <div className="submenu">{children}</div>}
+  </>
+);
+
 export default function Navbar() {
   const [cfgSubmenu, setCfgSubmenu] = useState(false);
   const [salarySubmenu, setSalarySubmenu] = useState(false);
@@ -18,51 +28,50 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const designation = localStorage.getItem("designation");
-  const userRole = localStorage.getItem("userRole");
   const token = localStorage.getItem("authToken");
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
+
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userRole");
+    localStorage.removeItem("designation");
     window.location.href = "/";
   };
 
-  const SubmenuToggle = ({ title, isOpen, toggleFunction, children }) => (
-    <>
-      <div onClick={toggleFunction} className="menu-item">
-        {title}{" "}
-        <FontAwesomeIcon icon={isOpen ? faChevronUp : faChevronDown} />
-      </div>
-      {isOpen && <div className="submenu">{children}</div>}
-    </>
-  );
-
   return (
     <div className={`Nav-container ${menuOpen ? "menu-open" : ""}`}>
-      {/* Hamburger Button */}
-      <button className="hamburger-button" onClick={toggleMenu}>
-        <FontAwesomeIcon icon={menuOpen ? faTimes : faBars} />
-      </button>
+      {/* Hamburger Icon */}
+      <div className="topbar">
+        <button className="hamburger-button" onClick={toggleMenu}>
+          <FontAwesomeIcon icon={menuOpen ? faTimes : faBars} />
+        </button>
+      </div>
+
 
       {/* Sidebar */}
       <div className="containernav">
         <div className="sidebar">
           <div className="sidebar-content">
-            {/* User Logo */}
+
+            {/* Profile Icon */}
             <div className="userlogo">
-              <FontAwesomeIcon icon={faUserCircle} className="big-icon" />
+              <Link to="/dashboard/profile">
+                <FontAwesomeIcon icon={faUserCircle} className="big-icon" style={{ color: 'white' }} />
+              </Link>
             </div>
 
             {/* Search Input */}
             <div className="search-container">
-              <FontAwesomeIcon icon={faSearch} className="search-icon" />
-              <input type="text" placeholder="Search" />
+              <div className="search-icon">
+                <FontAwesomeIcon icon={faSearch} className="search-icon" />
+                <input type="text" placeholder="Search" />
+              </div>
             </div>
 
-            {/* Navigation Menus */}
+            {/* Menus */}
             <div className="Navbar-menus">
-              {/* Config - Only for Director Roles */}
+              {/* Config Menu (Director only) */}
               {(designation === "Senior Director" || designation === "Director") && token && (
                 <SubmenuToggle
                   title="Config"
@@ -84,7 +93,7 @@ export default function Navbar() {
                 </SubmenuToggle>
               )}
 
-              {/* Salary Submenu */}
+              {/* Salary Menu */}
               <SubmenuToggle
                 title="Salary"
                 isOpen={salarySubmenu}
@@ -104,7 +113,10 @@ export default function Navbar() {
                 </Link>
               </SubmenuToggle>
 
-              {/* Other Menus */}
+              {/* Static Links */}
+              {/* <Link to="/dashboard/profile">
+                <div className="menu-item">Profile</div>
+              </Link> */}
               <Link to="/dashboard/home">
                 <div className="menu-item">Productivity Report</div>
               </Link>
@@ -127,7 +139,7 @@ export default function Navbar() {
                 <div className="menu-item">ConFig</div>
               </Link>
 
-              {/* Report Submenu */}
+              {/* Reports */}
               <SubmenuToggle
                 title="Reports"
                 isOpen={reportSubmenu}
@@ -147,7 +159,7 @@ export default function Navbar() {
                 </Link>
               </SubmenuToggle>
 
-              {/* Login/Logout */}
+              {/* Auth Menu */}
               {!token ? (
                 <Link to="/login">
                   <div className="menu-item">Login</div>

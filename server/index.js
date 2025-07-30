@@ -22,6 +22,7 @@ const onboard = require("./routes/onboardedCandidatesRoutes");
 const ConFigRoutes = require("./routes/ConFigRoutes");
 const AMFocusOnRoutes = require("./routes/AMFocusOnRoute");
 const assignmentRoutes = require('./routes/assignmentRoutes');
+const profileRoutes = require('./routes/ProfileRoute');
 
 
 
@@ -93,6 +94,7 @@ app.use("/onboardedCandidates", onboard);
 app.use("/config", ConFigRoutes);
 app.use("/AMFocusOn", AMFocusOnRoutes);
 app.use("/api/assignment", assignmentRoutes);
+app.use('/profile', profileRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
