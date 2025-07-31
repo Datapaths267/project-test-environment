@@ -25,7 +25,7 @@ exports.getProfileData = async (req, res) => {
             `SELECT COUNT(*) AS total
      FROM candidate_tracker c
      JOIN requirements r ON c.req_id = r.req_id
-     WHERE r.recruiter_id = $1 and c.status = 'active'`,
+     WHERE r.recruiter_id = $1 and c.status = 'active' and r.status = 'open'`,
             [userId]
         );
 
@@ -56,7 +56,7 @@ exports.getProfileData = async (req, res) => {
              JOIN candidate_tracker c ON c.candidate_id = i.candidate_id
              JOIN customers_detail cd ON cd.customer_id = i.client_id
              JOIN requirements r ON i.req_id = r.req_id
-             WHERE r.recruiter_id = $1
+             WHERE r.recruiter_id = $1 and r.status = 'open'
              ORDER BY i.created_at DESC LIMIT 10`,
             [userId]
         );
