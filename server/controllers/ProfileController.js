@@ -131,12 +131,13 @@ exports.getProfileData = async (req, res) => {
             revenue: revenue.rows[0]?.total_revenue || 0,
             monthlyRevenue: monthlyRevenue.rows || [],
             recentCandidates: recentCandidates.rows.map(r => ({
-                date: r.date,
+                date: r.interview_date,
                 candidate: r.candidate,
                 customer: r.customer,
-                stage: r.stage,
-                status: r.status
+                stage: r.level_of_interview,
+                status: r.interview_status
             }))
+
         });
         console.log("Profile data retrieved successfully");
         console.log("Employee:", employee);

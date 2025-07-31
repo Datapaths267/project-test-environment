@@ -24,6 +24,7 @@ export default function ProfilePage() {
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
                 setData(res.data);
+                console.log("Fetched profile data:", res.data);
             } catch (err) {
                 console.error("Error fetching profile data", err);
             }
@@ -125,16 +126,27 @@ export default function ProfilePage() {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {data?.recentCandidates?.map((item, index) => (
-                                                console.log("Recent Candidate Item:", item),
-                                                <tr key={index}>
-                                                    <td>{new Date(item.date).toLocaleDateString("en-IN")}</td>
-                                                    <td>{item.candidate}</td>
-                                                    <td>{item.customer}</td>
-                                                    <td>{item.stage || "-"}</td>
-                                                    <td>{item.status || "-"}</td>
-                                                </tr>
-                                            ))}
+                                            {data?.recentCandidates?.map((item, index) => {
+                                                console.log("Recent Candidate Item:", item);
+                                                return (
+                                                    <tr key={index}>
+                                                        <td>
+                                                            {item.date
+                                                                ? new Date(item.date).toLocaleDateString("en-IN", {
+                                                                    year: "numeric",
+                                                                    month: "short",
+                                                                    day: "numeric",
+                                                                })
+                                                                : "Invalid date"}
+                                                        </td>
+                                                        <td>{item.candidate}</td>
+                                                        <td>{item.customer}</td>
+                                                        <td>{item.stage || "-"}</td>
+                                                        <td>{item.status || "-"}</td>
+                                                    </tr>
+                                                );
+                                            })}
+
 
                                         </tbody>
 
