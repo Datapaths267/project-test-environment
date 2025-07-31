@@ -533,7 +533,7 @@ export default function CandidateTracker() {
                     <>
                         <Button className='add-Candidate-btn' onClick={() => { setShowForm(true) }}> Add Candidate </Button>
                         <Button className="upload-contact-btn" onClick={handleUploadClick}>
-                            <FaUpload /> Upload Requirement
+                            <FaUpload /> Upload Candidates
                         </Button>
                         <input
                             type="file"
@@ -545,7 +545,7 @@ export default function CandidateTracker() {
 
                         {/* Download Excel Button */}
                         <Button className="download-contact-btn" onClick={handleDownloadExcel}>
-                            <FaDownload /> Download Requirement
+                            <FaDownload /> Download Candidates
                         </Button>
 
                         <Button
@@ -553,7 +553,7 @@ export default function CandidateTracker() {
                             onClick={handleDeleteSelected}
                             disabled={selectedRows.size === 0}
                         >
-                            <FaTrash />  Delete Requirement
+                            <FaTrash />  Delete Candidates
                         </Button>
 
                         <Button
