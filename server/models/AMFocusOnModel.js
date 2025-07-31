@@ -65,7 +65,59 @@ const AMFocusOnTracker = {
             GROUP BY r.req_id, r.req_date, r.requirement, r.number_of_positions, r.company_id, r.recruiter_id, emp.employee_name, r.client_id, r.account_manager, cd.customer_name, r.status
             ORDER BY r.req_id ASC;
         `, [companyId]);
+      console.log("Query executed successfully for Senior Director or Director");
+
     }
+
+    else if (designation === 'Recruiter') {
+      // ✅ Recruiter logic: match recruiter_id
+      result = await dbConn.query(`
+    SELECT 
+        r.req_id,
+        r.req_date,
+        r.month,
+        r.year,
+        r.requirement,
+        r.number_of_positions,
+        r.company_id,
+        r.recruiter_id,
+        r.client_id,
+        r.account_manager,
+        emp.employee_name AS recruiter,
+        cd.customer_name AS customer,
+        r.status,
+        r.hire_type,
+
+        COUNT(ct.candidate_id) AS total_candidates,
+        COUNT(*) FILTER (WHERE ct.interview_status IS NOT NULL AND ct.interview_status::text <> 'Screen Reject') AS screen_selected,
+        COUNT(*) FILTER (WHERE ct.interview_status::text = 'Screen Reject') AS screen_rejected,
+        MAX(ct.interview_status_updated_at) AS last_active_date,
+        COUNT(*) FILTER (WHERE ct.interview_status::text = 'Interview Reject') AS interview_reject,
+        COUNT(*) FILTER (WHERE ct.interview_status::text = 'Interview Selected') AS interview_selected,
+        COUNT(*) FILTER (WHERE ct.interview_status::text = 'Shortlisted') AS shortlisted,
+        COUNT(*) FILTER (WHERE ct.interview_status::text = 'Offer RolledOut') AS offer_rolledout,
+        COUNT(*) FILTER (WHERE ct.interview_status::text = 'Onboarded') AS onboarded,
+        COUNT(*) FILTER (WHERE ct.interview_status::text = 'Onboarded Failure') AS onboarded_failure,
+        COUNT(*) FILTER (WHERE ct.interview_status::text = 'Offer RolledOut Accepted') AS offer_rolledout_accepted,
+
+        COUNT(*) FILTER (WHERE isch.interview_status = 'Hold') AS hold,
+        COUNT(*) FILTER (WHERE isch.interview_status = 'No Show') AS no_show,
+        COUNT(*) FILTER (WHERE isch.interview_status = 'L4 - Managerial Round') AS Managerial_round,
+        COUNT(*) FILTER (WHERE isch.interview_status = 'L5 - Client Round') AS client_round,
+        COUNT(*) FILTER (WHERE isch.interview_status = 'L6 - HR Round') AS hr_round,
+        COUNT(*) FILTER (WHERE isch.interview_status = 'L7 - Offer Discussion') AS offer_discussion
+
+    FROM requirements r
+    JOIN employee_list emp ON r.recruiter_id = emp.employee_id
+    JOIN customers_detail cd ON r.client_id = cd.customer_id
+    LEFT JOIN candidate_tracker ct ON r.req_id::text = ct.req_id::text
+    LEFT JOIN interview_schedule isch ON ct.candidate_id = isch.candidate_id
+    WHERE r.company_id = $1 AND r.recruiter_id = $2
+    GROUP BY r.req_id, r.req_date, r.requirement, r.number_of_positions, r.company_id, r.recruiter_id, emp.employee_name, r.client_id, r.account_manager, cd.customer_name, r.status
+    ORDER BY r.req_id ASC;
+  `, [companyId, employeeId]);
+    }
+
     else {
       result = await dbConn.query(`
              SELECT 
